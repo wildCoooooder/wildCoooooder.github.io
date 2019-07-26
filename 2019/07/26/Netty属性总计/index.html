@@ -79,17 +79,20 @@
 
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="description" content="pipeline 与 channelHandler如果对数据包的判断都写在一个类中，通过if else 分类再实现相应的业务逻辑会导致以下问题：   代码臃肿 不利于后期功能拓展   使用pipeline 与 channelHandler  通过责任链设计模式来组织代码逻辑，并且能够支持逻辑的动态添加和删除 Netty中支持各种协议的拓展，如Redis、HTTP、WebSocket  构成：  N">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://wildecu.gitee.io/blog/2019/07/26/hello-world/index.html">
+<meta property="og:title" content="Netty之内含属性">
+<meta property="og:url" content="http://wildecu.gitee.io/blog/2019/07/26/Netty属性总计/index.html">
 <meta property="og:site_name" content="小码">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="pipeline 与 channelHandler如果对数据包的判断都写在一个类中，通过if else 分类再实现相应的业务逻辑会导致以下问题：   代码臃肿 不利于后期功能拓展   使用pipeline 与 channelHandler  通过责任链设计模式来组织代码逻辑，并且能够支持逻辑的动态添加和删除 Netty中支持各种协议的拓展，如Redis、HTTP、WebSocket  构成：  N">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-07-26T02:02:59.610Z">
+<meta property="og:image" content="http://wildecu.gitee.io/blog/2019/07/26/images/pipeline%E6%9E%84%E6%88%90.png">
+<meta property="og:image" content="http://wildecu.gitee.io/blog/2019/07/26/images/ChannelPipeline%E5%88%86%E7%B1%BB.png">
+<meta property="og:updated_time" content="2019-07-26T02:43:32.196Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="Netty之内含属性">
+<meta name="twitter:description" content="pipeline 与 channelHandler如果对数据包的判断都写在一个类中，通过if else 分类再实现相应的业务逻辑会导致以下问题：   代码臃肿 不利于后期功能拓展   使用pipeline 与 channelHandler  通过责任链设计模式来组织代码逻辑，并且能够支持逻辑的动态添加和删除 Netty中支持各种协议的拓展，如Redis、HTTP、WebSocket  构成：  N">
+<meta name="twitter:image" content="http://wildecu.gitee.io/blog/2019/07/26/images/pipeline%E6%9E%84%E6%88%90.png">
 
 
 
@@ -119,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://wildecu.gitee.io/blog/2019/07/26/hello-world/">
+  <link rel="canonical" href="http://wildecu.gitee.io/blog/2019/07/26/Netty属性总计/">
 
 
 
 
 
-  <title>Hello World | 小码</title>
+  <title>Netty之内含属性 | 小码</title>
   
 
 
@@ -232,7 +235,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://wildecu.gitee.io/blog/blog/2019/07/26/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://wildecu.gitee.io/blog/blog/2019/07/26/Netty属性总计/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="小码">
@@ -249,7 +252,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Hello World</h1>
+          <h1 class="post-title" itemprop="name headline">Netty之内含属性</h1>
         
 
         <div class="post-meta">
@@ -261,7 +264,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-26T10:05:11+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-26T10:56:18+08:00">
                 2019-07-26
               </time>
             
@@ -299,19 +302,66 @@
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <h2 id="pipeline-与-channelHandler"><a href="#pipeline-与-channelHandler" class="headerlink" title="pipeline 与 channelHandler"></a>pipeline 与 channelHandler</h2><p>如果对数据包的判断都写在一个类中，通过if else 分类再实现相应的业务逻辑会导致以下问题：</p>
+<blockquote>
+<ul>
+<li>代码臃肿</li>
+<li>不利于后期功能拓展</li>
+</ul>
+</blockquote>
+<p>使用pipeline 与 channelHandler</p>
+<blockquote>
+<p>通过责任链设计模式来组织代码逻辑，并且能够支持逻辑的动态添加和删除</p>
+<p>Netty中支持各种协议的拓展，如Redis、HTTP、WebSocket</p>
+</blockquote>
+<p>构成：</p>
+<p><img src="../images/pipeline%E6%9E%84%E6%88%90.png" alt="pipeline.png"></p>
+<p>Netty框架中一条链对应一个channel，链中的所有处理逻辑都在ChannelPipeline的对象中（是一个双向链表，与Channel为一对一的关系）</p>
+<p>ChannelPipeline的分类：</p>
+<p><img src="../images/ChannelPipeline%E5%88%86%E7%B1%BB.png" alt="ChannelPipeline"></p>
+<p>ChannelPipeline有两大子接口，ChannelInboundHandler与ChannelOutBoundHandler。。 两大子接口都有默认实现</p>
+<p>ChannelInboundHandlerAdapter与ChanneloutBoundHandlerAdapter</p>
+<blockquote>
+<ul>
+<li>ChannelInboundHandler    处理读数据的逻辑，最重要的方法是channelRead()，顺序执行</li>
+<li>ChannelOutBoundHandler     处理写数据的逻辑，最重要的方法是write()，逆序执行</li>
+</ul>
+</blockquote>
+<h2 id="粘包与拆包"><a href="#粘包与拆包" class="headerlink" title="粘包与拆包"></a>粘包与拆包</h2><p>Netty中虽然使用ByteBuf为单位进行发送，但对于操作系统来说最终还是要通过TCP协议发送数据，按照字节流发送数据。数据到了服务端，以字节流的形式读入，重新拼装成ByteBuf，在这一整个过程中可能会出现顺序不对等的情况。因此，需要在应用层指定协议，客户端根据协议来组装数据包称为粘包，服务端根据协议组装数据包称为拆包。</p>
+<blockquote>
+<p>比如，发送端将3个数据包粘成2个TCP数据包发送到接收端，接收端就需要根据应用协议将2个数据包重新组装为3个数据包。</p>
+</blockquote>
+<h2 id="Netty中自带的拆包器"><a href="#Netty中自带的拆包器" class="headerlink" title="Netty中自带的拆包器"></a>Netty中自带的拆包器</h2><blockquote>
+<ul>
+<li>基于长度域拆包器 LengthFieldBasedFrameDecoder 最常用</li>
+<li>固定长度的拆包器 FixedLengthFrameDecoder</li>
+<li>行拆包器 LineBasedFrameDecoder</li>
+<li>分隔符拆包器 DelimiterBasedFrameDecoder</li>
+</ul>
+</blockquote>
+<h2 id="ChannelHandler的生命周期"><a href="#ChannelHandler的生命周期" class="headerlink" title="ChannelHandler的生命周期"></a>ChannelHandler的生命周期</h2><p>handlerAdded() -&gt; channelRegistered() -&gt; channelActive() -&gt; channelRead() -&gt; channelReadComplete()-&gt;</p>
+<p>channelInactive() -&gt; channelUnregistered() -&gt; handlerRemoved()</p>
+<blockquote>
+<ol>
+<li><code>handlerAdded()</code> ：当检测到新连接之后回调，表示在当前channel中添加了一个handler处理器<ul>
+<li>可用于一些资源的申请和释放</li>
+</ul>
+</li>
+<li><code>channelRegistered()</code>：表示当前的 channel 的所有的逻辑处理已经和某个 NIO 线程建立了绑定关系， Netty 里面是使用了线程池的方式，只需要从线程池里面去抓一个线程绑定在这个 channel 上即可</li>
+<li><code>channelActive()</code>：当 channel 的所有的业务逻辑链准备完毕（也就是说 channel 的 pipeline 中已经添加完所有的 handler）以及绑定好一个 NIO 线程之后，这条连接算是真正激活了，接下来就会回调到此方法。<ul>
+<li>可用于连接数的统计，每建立一次连接，该方法被调用一次，连接数加一</li>
+</ul>
+</li>
+<li><code>channelRead()</code>：客户端向服务端发来数据，每次都会回调此方法，表示有数据可读。<ul>
+<li>拆包就在这个方法中进行，根据自定义的协议来进行拆包，每次读取到的数据都会累加到一个容器里面，然后判断能否拆除一个完整的数据包，如果够了就往下传递。</li>
+</ul>
+</li>
+<li><code>channelReadComplete()</code>：服务端每次读完一次完整的数据之后，回调该方法，表示数据读取完毕。</li>
+<li><code>channelInactive()</code>: 表面这条连接已经被关闭了，这条连接在 TCP 层面已经不再是 ESTABLISH 状态了</li>
+<li><code>channelUnregistered()</code>: 表明与这条连接对应的 NIO 线程移除掉对这条连接的处理</li>
+<li><code>handlerRemoved()</code>：最后，我们给这条连接上添加的所有的业务逻辑处理器都给移除掉。</li>
+</ol>
+</blockquote>
 
       
     </div>
@@ -336,14 +386,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/blog/2019/07/26/Netty简例/" rel="next" title="Netty之聊天室的“Hello World”">
+                <i class="fa fa-chevron-left"></i> Netty之聊天室的“Hello World”
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/blog/2019/07/26/搭建hexo博客/" rel="prev" title="搭建Hexo博客">
-                搭建Hexo博客 <i class="fa fa-chevron-right"></i>
+              <a href="/blog/2019/07/26/Netty之自定义通信协议/" rel="prev" title="Netty之通讯协议设计">
+                Netty之通讯协议设计 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -458,7 +512,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#pipeline-与-channelHandler"><span class="nav-number">1.</span> <span class="nav-text">pipeline 与 channelHandler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#粘包与拆包"><span class="nav-number">2.</span> <span class="nav-text">粘包与拆包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty中自带的拆包器"><span class="nav-number">3.</span> <span class="nav-text">Netty中自带的拆包器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChannelHandler的生命周期"><span class="nav-number">4.</span> <span class="nav-text">ChannelHandler的生命周期</span></a></li></ol></div>
             
 
           </div>

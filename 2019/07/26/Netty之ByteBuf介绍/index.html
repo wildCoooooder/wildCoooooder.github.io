@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/blog/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/blog/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/blog/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/blog/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="ByteBuf结构 ByteBuf结构图如上，可分为三个部分：   废弃、可读、可写 三个 部分由两个指针划分（readIndex、writeIndex）还有一个变量capacity代表底层内存容量 在ByteBuf中每read或write一次，对应的指针自增1 当writeIndex指针到达capacity后，表示ByteBuf不可再写。但是若存在maxCapacity则可以自动扩容   常用A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty数据传输载体--ByteBuf">
+<meta property="og:url" content="http://wildecu.gitee.io/blog/2019/07/26/Netty之ByteBuf介绍/index.html">
+<meta property="og:site_name" content="小码">
+<meta property="og:description" content="ByteBuf结构 ByteBuf结构图如上，可分为三个部分：   废弃、可读、可写 三个 部分由两个指针划分（readIndex、writeIndex）还有一个变量capacity代表底层内存容量 在ByteBuf中每read或write一次，对应的指针自增1 当writeIndex指针到达capacity后，表示ByteBuf不可再写。但是若存在maxCapacity则可以自动扩容   常用A">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://wildecu.gitee.io/blog/2019/07/26/images/ByteBuf%E7%BB%93%E6%9E%84.png">
+<meta property="og:updated_time" content="2019-07-26T02:41:58.294Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Netty数据传输载体--ByteBuf">
+<meta name="twitter:description" content="ByteBuf结构 ByteBuf结构图如上，可分为三个部分：   废弃、可读、可写 三个 部分由两个指针划分（readIndex、writeIndex）还有一个变量capacity代表底层内存容量 在ByteBuf中每read或write一次，对应的指针自增1 当writeIndex指针到达capacity后，表示ByteBuf不可再写。但是若存在maxCapacity则可以自动扩容   常用A">
+<meta name="twitter:image" content="http://wildecu.gitee.io/blog/2019/07/26/images/ByteBuf%E7%BB%93%E6%9E%84.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/blog/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wildecu.gitee.io/blog/2019/07/26/Netty之ByteBuf介绍/">
+
+
+
+
+
+  <title>Netty数据传输载体--ByteBuf | 小码</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小码</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">BoardMan's Blog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/blog/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/blog/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wildecu.gitee.io/blog/blog/2019/07/26/Netty之ByteBuf介绍/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="小码">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小码">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Netty数据传输载体--ByteBuf</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-26T10:56:18+08:00">
+                2019-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="ByteBuf结构"><a href="#ByteBuf结构" class="headerlink" title="ByteBuf结构"></a>ByteBuf结构</h3><p><img src="../images/ByteBuf%E7%BB%93%E6%9E%84.png" alt="ByteBuf结构"></p>
+<p>ByteBuf结构图如上，可分为三个部分：</p>
+<blockquote>
+<ul>
+<li>废弃、可读、可写</li>
+<li>三个 部分由两个指针划分（readIndex、writeIndex）还有一个变量capacity代表底层内存容量</li>
+<li>在ByteBuf中每read或write一次，对应的指针自增1</li>
+<li>当writeIndex指针到达capacity后，表示ByteBuf不可再写。但是若存在maxCapacity则可以自动扩容</li>
+</ul>
+</blockquote>
+<h3 id="常用API"><a href="#常用API" class="headerlink" title="常用API"></a>常用API</h3><h4 id="容量API"><a href="#容量API" class="headerlink" title="容量API"></a>容量API</h4><blockquote>
+<p> capacity()、maxCapacity()        代表容量与最大容量</p>
+<p>readableBytes() 与 isReadable()        可读/写 则返回true，否则返回false</p>
+<p>writableBytes()、 isWritable() 与 maxWritableBytes()    可读写的容量</p>
+</blockquote>
+<h4 id="指针API"><a href="#指针API" class="headerlink" title="指针API"></a>指针API</h4><blockquote>
+<ul>
+<li><p>readerIndex() 与 readerIndex(int)    前者表示返回当前的读指针 readerIndex, 后者表示设置读指针</p>
+</li>
+<li><p>writeIndex() 与 writeIndex(int)    前者表示返回当前的写指针 writerIndex, 后者表示设置写指针</p>
+</li>
+<li><p>markReaderIndex() 与 resetReaderIndex()    前者表示把当前的读指针保存起来，后者表示把当前的读指针恢复到之前保存的值，下面两段代码是等价的</p>
+</li>
+<li><p>同样的还有：</p>
+<ul>
+<li>markWriterIndex() 与 resetWriterIndex()</li>
+</ul>
+<p>下面二者的代码等价，推荐使用片段二        </p>
+</li>
+</ul>
+<p>​    常见于解析自定义协议的数据包</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="comment">// 代码片段1</span></span><br><span class="line">&gt; <span class="keyword">int</span> readerIndex = buffer.readerIndex();</span><br><span class="line">&gt; <span class="comment">// .. 其他操作</span></span><br><span class="line">&gt; buffer.readerIndex(readerIndex);</span><br><span class="line">&gt; </span><br><span class="line">&gt; </span><br><span class="line">&gt; <span class="comment">// 代码片段二</span></span><br><span class="line">&gt; buffer.markReaderIndex();</span><br><span class="line">&gt; <span class="comment">// .. 其他操作</span></span><br><span class="line">&gt; buffer.resetReaderIndex();</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+</blockquote>
+<h4 id="读写API"><a href="#读写API" class="headerlink" title="读写API"></a>读写API</h4><blockquote>
+<p>writeBytes(byte[] src) 与 buffer.readBytes(byte[] dst)</p>
+</blockquote>
+<p>writeBytes() 表示把字节数组 src 里面的数据全部写到 ByteBuf，而 readBytes() 指的是把 ByteBuf 里面的数据全部读取到 dst，这里 dst 字节数组的大小通常等于 readableBytes()，而 src 字节数组大小的长度通常小于等于 writableBytes()</p>
+<blockquote>
+<p>writeByte(byte b) 与 buffer.readByte()</p>
+</blockquote>
+<p>writeByte() 表示往 ByteBuf 中写一个字节，而 buffer.readByte() 表示从 ByteBuf 中读取一个字节，类似的 API 还有 writeXXX()、readXXX()…..</p>
+<p>同时 还有 getBytes、getByte() 与 setBytes()、setByte() 系列，唯一的区别就是 get/set 不会改变读写指针，而 read/write 会改变读写指针</p>
+<h4 id="关于内存管理："><a href="#关于内存管理：" class="headerlink" title="关于内存管理："></a>关于内存管理：</h4><blockquote>
+<p>release() 与 retain()</p>
+</blockquote>
+<p><strong>Netty 的 ByteBuf 是通过引用计数的方式管理的，如果一个 ByteBuf 没有地方被引用到，需要回收底层内存。默认情况下，当创建完一个 ByteBuf，它的引用为1，然后每次调用 retain() 方法， 它的引用就加一， release() 方法原理是将引用计数减一，减完之后如果发现引用计数为0，则直接回收 ByteBuf 底层的内存。</strong></p>
+<blockquote>
+<p>slice()、duplicate()、copy()</p>
+</blockquote>
+<ol>
+<li><p>slice() 方法从原始 ByteBuf 中截取一段，这段数据是从 readerIndex 到 writeIndex，同时，返回的新的 ByteBuf 的最大容量 maxCapacity 为原始 ByteBuf 的 readableBytes()</p>
+</li>
+<li><p>duplicate() 方法把整个 ByteBuf 都截取出来，包括所有的数据，指针信息</p>
+</li>
+<li><p>slice() 方法与 duplicate() 方法的相同点是：底层内存以及引用计数与原始的 ByteBuf 共享，也就是说经过 slice() 或者 duplicate() 返回的 ByteBuf 调用 write 系列方法都会影响到原始的 ByteBuf，但是它们都维持着与原始 ByteBuf 相同的内存引用计数和不同的读写指针</p>
+</li>
+<li><p>slice() 方法与 duplicate() 不同点就是：slice() 只截取从 readerIndex 到 writerIndex 之间的数据，它返回的 ByteBuf 的最大容量被限制到 原始 ByteBuf 的 readableBytes(), 而 duplicate() 是把整个 ByteBuf 都与原始的 ByteBuf 共享</p>
+</li>
+<li><p>slice() 方法与 duplicate() 方法不会拷贝数据，它们只是通过改变读写指针来改变读写的行为，而最后一个方法 copy() 会直接从原始的 ByteBuf 中拷贝所有的信息，包括读写指针以及底层对应的数据，因此，往 copy() 返回的 ByteBuf 中写数据不会影响到原始的 ByteBuf</p>
+</li>
+<li><p>slice() 和 duplicate() 不会改变 ByteBuf 的引用计数，所以原始的 ByteBuf 调用 release() 之后发现引用计数为零，就开始释放内存，调用这两个方法返回的 ByteBuf 也会被释放，这个时候如果再对它们进行读写，就会报错。因此，我们可以通过调用一次 retain() 方法来增加引用，表示它们对应的底层的内存多了一次引用，引用计数为2，在释放内存的时候，需要调用两次 release() 方法，将引用计数降到零，才会释放内存</p>
+</li>
+<li><p>这三个方法均维护着自己的读写指针，与原始的 ByteBuf 的读写指针无关，相互之间不受影响</p>
+<blockquote>
+<p>retainedSlice() 与 retainedDuplicate()</p>
+<p>  截取内存片段的同时，增加内存的引用计数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="comment">// retainedSlice 等价于</span></span><br><span class="line">&gt; slice().retain();</span><br><span class="line">&gt; </span><br><span class="line">&gt; <span class="comment">// retainedDuplicate() 等价于</span></span><br><span class="line">&gt; duplicate().retain()</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ol>
+<p>在一个函数体里面，只要增加了引用计数（包括 ByteBuf 的创建和手动调用 retain() 方法），就必须调用 release() 方法。</p>
+<h4 id="一个简单的Demo"><a href="#一个简单的Demo" class="headerlink" title="一个简单的Demo"></a>一个简单的Demo</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ByteBufTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//创建一个capacity()为9，maxCapacity为100的ByteBuf</span></span><br><span class="line">        ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(<span class="number">9</span>, <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">        print(<span class="string">"allocate ByteBuf(9, 100)"</span>, buffer);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// write 方法改变写指针，写完之后写指针未到 capacity 的时候，buffer 仍然可写</span></span><br><span class="line">        buffer.writeBytes(<span class="keyword">new</span> <span class="keyword">byte</span>[]&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;);</span><br><span class="line">        print(<span class="string">"writeBytes(1,2,3,4)"</span>, buffer);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// write 方法改变写指针，写完之后写指针未到 capacity 的时候，buffer 仍然可写, 写完 int 类型之后，写指针增加4</span></span><br><span class="line">        buffer.writeInt(<span class="number">12</span>);</span><br><span class="line">        print(<span class="string">"writeInt(12)"</span>, buffer);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// write 方法改变写指针, 写完之后写指针等于 capacity 的时候，buffer 不可写</span></span><br><span class="line">        buffer.writeBytes(<span class="keyword">new</span> <span class="keyword">byte</span>[]&#123;<span class="number">5</span>&#125;);</span><br><span class="line">        print(<span class="string">"writeBytes(5)"</span>, buffer);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// write 方法改变写指针，写的时候发现 buffer 不可写则开始扩容，扩容之后 capacity 随即改变</span></span><br><span class="line">        buffer.writeBytes(<span class="keyword">new</span> <span class="keyword">byte</span>[]&#123;<span class="number">6</span>&#125;);</span><br><span class="line">        print(<span class="string">"writeBytes(6)"</span>, buffer);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// get 方法不改变读写指针</span></span><br><span class="line">        System.out.println(<span class="string">"getByte(3) return: "</span> + buffer.getByte(<span class="number">3</span>));</span><br><span class="line">        System.out.println(<span class="string">"getShort(3) return: "</span> + buffer.getShort(<span class="number">3</span>));</span><br><span class="line">        System.out.println(<span class="string">"getInt(3) return: "</span> + buffer.getInt(<span class="number">3</span>));</span><br><span class="line">        print(<span class="string">"getByte()"</span>, buffer);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">// set 方法不改变读写指针</span></span><br><span class="line">        buffer.setByte(buffer.readableBytes() + <span class="number">1</span>, <span class="number">10</span>);</span><br><span class="line">        print(<span class="string">"setByte()"</span>, buffer);</span><br><span class="line">        System.out.println(buffer.getByte(buffer.readableBytes()+<span class="number">1</span>));</span><br><span class="line">        System.out.println(buffer.getByte(<span class="number">11</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// read 方法改变读指针</span></span><br><span class="line">        <span class="keyword">byte</span>[] dst = <span class="keyword">new</span> <span class="keyword">byte</span>[buffer.readableBytes()];</span><br><span class="line">        buffer.readBytes(dst);</span><br><span class="line">        print(<span class="string">"readBytes("</span> + dst.length + <span class="string">")"</span>, buffer);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(String action, ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"after ==========="</span> + action + <span class="string">"============"</span>);</span><br><span class="line">        System.out.println(<span class="string">"capacity(): "</span> + buffer.capacity());</span><br><span class="line">        System.out.println(<span class="string">"maxCapacity(): "</span> + buffer.maxCapacity());</span><br><span class="line">        System.out.println(<span class="string">"readerIndex(): "</span> + buffer.readerIndex());</span><br><span class="line">        System.out.println(<span class="string">"readableBytes(): "</span> + buffer.readableBytes());</span><br><span class="line">        System.out.println(<span class="string">"isReadable(): "</span> + buffer.isReadable());</span><br><span class="line">        System.out.println(<span class="string">"writerIndex(): "</span> + buffer.writerIndex());</span><br><span class="line">        System.out.println(<span class="string">"writableBytes(): "</span> + buffer.writableBytes());</span><br><span class="line">        System.out.println(<span class="string">"isWritable(): "</span> + buffer.isWritable());</span><br><span class="line">        System.out.println(<span class="string">"maxWritableBytes(): "</span> + buffer.maxWritableBytes());</span><br><span class="line">        System.out.println();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2019/07/26/趣谈网络协议/" rel="next" title="浅记--趣谈网络协议		长期更新....">
+                <i class="fa fa-chevron-left"></i> 浅记--趣谈网络协议		长期更新....
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">小码</p>
+              <p class="site-description motion-element" itemprop="description">点滴记录，汇聚分享</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/blog/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ByteBuf结构"><span class="nav-number">1.</span> <span class="nav-text">ByteBuf结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用API"><span class="nav-number">2.</span> <span class="nav-text">常用API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#容量API"><span class="nav-number">2.1.</span> <span class="nav-text">容量API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#指针API"><span class="nav-number">2.2.</span> <span class="nav-text">指针API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读写API"><span class="nav-number">2.3.</span> <span class="nav-text">读写API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于内存管理："><span class="nav-number">2.4.</span> <span class="nav-text">关于内存管理：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一个简单的Demo"><span class="nav-number">2.5.</span> <span class="nav-text">一个简单的Demo</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小码</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/blog/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/blog/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/blog/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

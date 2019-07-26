@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/blog/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/blog/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/blog/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/blog/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="通讯协议的定义与设计无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。 一种数据包的设计：   魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。 版本号，一般留作版本升级使用。多数用不到。 序列化算法，标明自身使用的序列化方式。需">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty之通讯协议设计">
+<meta property="og:url" content="http://wildecu.gitee.io/blog/2019/07/26/Netty之自定义通信协议/index.html">
+<meta property="og:site_name" content="小码">
+<meta property="og:description" content="通讯协议的定义与设计无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。 一种数据包的设计：   魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。 版本号，一般留作版本升级使用。多数用不到。 序列化算法，标明自身使用的序列化方式。需">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://wildecu.gitee.io/blog/2019/07/26/images/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png">
+<meta property="og:updated_time" content="2019-07-26T02:42:21.716Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Netty之通讯协议设计">
+<meta name="twitter:description" content="通讯协议的定义与设计无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。 一种数据包的设计：   魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。 版本号，一般留作版本升级使用。多数用不到。 序列化算法，标明自身使用的序列化方式。需">
+<meta name="twitter:image" content="http://wildecu.gitee.io/blog/2019/07/26/images/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/blog/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wildecu.gitee.io/blog/2019/07/26/Netty之自定义通信协议/">
+
+
+
+
+
+  <title>Netty之通讯协议设计 | 小码</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小码</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">BoardMan's Blog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/blog/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/blog/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wildecu.gitee.io/blog/blog/2019/07/26/Netty之自定义通信协议/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="小码">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小码">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Netty之通讯协议设计</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-26T10:56:18+08:00">
+                2019-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="通讯协议的定义与设计"><a href="#通讯协议的定义与设计" class="headerlink" title="通讯协议的定义与设计"></a>通讯协议的定义与设计</h2><p>无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。</p>
+<p>一种数据包的设计：</p>
+<p><img src="../images/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png" alt="数据包的设计"></p>
+<ol>
+<li>魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。</li>
+<li>版本号，一般留作版本升级使用。多数用不到。</li>
+<li>序列化算法，标明自身使用的序列化方式。需要服务端与客户端协同标明。</li>
+<li>指令，二进制下，一个字节占八位，可以代表255个指令。</li>
+<li>数据长度，固定字节格式。这里只说明后续数据部分的长度。</li>
+<li>数据，通讯包中的数据内容。如，登录时的用户信息..</li>
+</ol>
+<h2 id="通讯过程中的Java对象"><a href="#通讯过程中的Java对象" class="headerlink" title="通讯过程中的Java对象"></a>通讯过程中的Java对象</h2><p>定义抽象类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Packet</span> </span>&#123;</span><br><span class="line">	<span class="comment">//协议版本</span></span><br><span class="line">    <span class="meta">@JSONField</span>(deserialize = <span class="keyword">false</span>, serialize = <span class="keyword">false</span>)</span><br><span class="line">    <span class="keyword">private</span> Byte version = <span class="number">1</span>;</span><br><span class="line">	<span class="comment">//指令</span></span><br><span class="line">    <span class="meta">@JSONField</span>(serialize = <span class="keyword">false</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Byte <span class="title">getCommand</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>定义通讯过程中Java对象的抽象类，所有的指令数据包都必须实现这里面的方法getCommand()</li>
+<li>所有的request/response包都继承该类</li>
+</ul>
+</blockquote>
+<p>定义指令接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Command</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    Byte LOGIN_REQUEST = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    Byte LOGIN_RESPONSE = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>定义request/reponse指令</li>
+</ul>
+</blockquote>
+<p>定义请求Java对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> protocol.command.Command.LOGIN_REQUEST;</span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginRequestPacket</span> <span class="keyword">extends</span> <span class="title">Packet</span> </span>&#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * 定义数据内容</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="keyword">private</span> String userId;</span><br><span class="line">    <span class="keyword">private</span> String content;</span><br><span class="line">    <span class="keyword">private</span> String location;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Byte <span class="title">getCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> LOGIN_REQUEST;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h2><p>定义序列化接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Serializer</span> </span>&#123;</span><br><span class="line">	<span class="comment">//定义默认序列化算法</span></span><br><span class="line">    Serializer DEFAULT = <span class="keyword">new</span> JSONSerializer();</span><br><span class="line"></span><br><span class="line"> 	<span class="comment">//获取序列化算法</span></span><br><span class="line">    <span class="function"><span class="keyword">byte</span> <span class="title">getSerializerAlgorithm</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//Java对象转化为字节数组</span></span><br><span class="line">    <span class="keyword">byte</span>[] serialize(Object object);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//二进制数组转换为Java对象</span></span><br><span class="line">    &lt;T&gt; <span class="function">T <span class="title">deserialize</span><span class="params">(Class&lt;T&gt; clazz, <span class="keyword">byte</span>[] bytes)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>序列化中定义三个方法，获取序列化算法标识，以选择后续序列化方式。然后进行相应的序列化与反序列化。这里选用fastjson作为序列化框架</li>
+<li>序列化serialize() 将Java对象转换为字节数组，反序列deserialize() 将字节数组转换为某种类型的Java对象</li>
+</ul>
+</blockquote>
+<p>实现序列化接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JSONSerializer</span> <span class="keyword">implements</span> <span class="title">Serializer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">byte</span> <span class="title">getSerializerAlgorithm</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SerializeAlgorithm.JSON;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">byte</span>[] serialize(Object object) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> JSON.toJSONBytes(object);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">deserialize</span><span class="params">(Class&lt;T&gt; clazz, <span class="keyword">byte</span>[] bytes)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> JSON.parseObject(bytes, clazz);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>定义序列化算法的类型：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">SerializeAlgorithm</span> </span>&#123;</span><br><span class="line">	<span class="comment">//JSON序列化标识</span></span><br><span class="line">    <span class="keyword">byte</span> JSON = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//定义默认序列化算法</span></span><br><span class="line">    Serializer DEFAULT = <span class="keyword">new</span> JSONSerializer();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>把JSON设为默认序列化算法</li>
+<li>如果想使用其他的序列化算法，则定义其他的接口，并继承接口Serializer，再定义序列化标识，再覆盖两个方法即可。</li>
+</ul>
+</blockquote>
+<h2 id="编码：封装成二进制的过程"><a href="#编码：封装成二进制的过程" class="headerlink" title="编码：封装成二进制的过程"></a>编码：封装成二进制的过程</h2><blockquote>
+<p>PacketCodeC.java</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAGIC_NUMBER = <span class="number">0x12345678</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> ByteBuf <span class="title">encode</span><span class="params">(ByteBufAllocator byteBufAllocator, Packet packet)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//1. 创建ByteBuf对象</span></span><br><span class="line">    ByteBuf byteBuf = byteBufAllocator.ioBuffer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2. 序列化Java对象</span></span><br><span class="line">    <span class="keyword">byte</span>[] bytes = Serializer.DEFAULT.serialize(packet);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3. 实际编码过程</span></span><br><span class="line">    byteBuf.writeInt(MAGIC_NUMBER);</span><br><span class="line">    byteBuf.writeByte(packet.getVersion());</span><br><span class="line">    byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());</span><br><span class="line">    byteBuf.writeByte(packet.getCommand());</span><br><span class="line">    byteBuf.writeInt(bytes.length);</span><br><span class="line">    byteBuf.writeBytes(bytes);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> byteBuf;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>首先创建一个ByteBuf，<code>ioBuffer()</code>方法会返回适配 io 读写相关的内存</li>
+<li>将Java对象序列化为二进制数据包</li>
+<li>按照协议往包内写入数据</li>
+</ul>
+</blockquote>
+<h2 id="解码：将二进制数据包解析为Java对象的过程"><a href="#解码：将二进制数据包解析为Java对象的过程" class="headerlink" title="解码：将二进制数据包解析为Java对象的过程"></a>解码：将二进制数据包解析为Java对象的过程</h2><blockquote>
+<p>PacketCodeC.java</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Packet <span class="title">decode</span><span class="params">(ByteBuf byteBuf)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//1. 跳过魔数</span></span><br><span class="line">    byteBuf.skipBytes(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2. 跳过版本号</span></span><br><span class="line">    byteBuf.skipBytes(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3. 获取序列化算法    readIndex向前移动一位</span></span><br><span class="line">    <span class="keyword">byte</span> serializeAlgorithm = byteBuf.readByte();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4. 获取指令   readIndex向前移动一位</span></span><br><span class="line">    <span class="keyword">byte</span> command = byteBuf.readByte();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//5. 获取有效数据包长度</span></span><br><span class="line">    <span class="keyword">int</span> length = byteBuf.readInt();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * 6. 重新构建一个新的字节包</span></span><br><span class="line"><span class="comment">    *       构建一个字节长度为length的数组</span></span><br><span class="line"><span class="comment">    *       把ByteBuf的剩余数据 写入这个新建的数组中</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[length];</span><br><span class="line">    byteBuf.readBytes(bytes);</span><br><span class="line"></span><br><span class="line">    Class&lt;? extends Packet&gt; requestType = getRequestType(command);</span><br><span class="line">    Serializer serializer = getSerializer(serializeAlgorithm);</span><br><span class="line">    <span class="keyword">if</span> (requestType != <span class="keyword">null</span> &amp;&amp; serializer != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> serializer.deserialize(requestType, bytes);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="附–编解码实现逻辑代码："><a href="#附–编解码实现逻辑代码：" class="headerlink" title="附–编解码实现逻辑代码："></a>附–编解码实现逻辑代码：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PacketCodeC</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAGIC_NUMBER = <span class="number">0x12345678</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> PacketCodeC INSTANCE = <span class="keyword">new</span> PacketCodeC();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;Byte, Class&lt;? extends Packet&gt;&gt; packetTypeMap;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;Byte, Serializer&gt; serializerMap;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">PacketCodeC</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        packetTypeMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        packetTypeMap.put(LOGIN_REQUEST, LoginRequestPacket.class);</span><br><span class="line">        packetTypeMap.put(LOGIN_RESPONSE, LoginResponsePacket.class);</span><br><span class="line"></span><br><span class="line">        serializerMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        Serializer serializer = <span class="keyword">new</span> JSONSerializer();</span><br><span class="line">        serializerMap.put(serializer.getSerializerAlgorithm(), serializer);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ByteBuf <span class="title">encode</span><span class="params">(ByteBufAllocator byteBufAllocator, Packet packet)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//1. 创建ByteBuf对象</span></span><br><span class="line">        ByteBuf byteBuf = byteBufAllocator.ioBuffer();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2. 序列化Java对象</span></span><br><span class="line">        <span class="keyword">byte</span>[] bytes = Serializer.DEFAULT.serialize(packet);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//3. 实际编码过程</span></span><br><span class="line">        byteBuf.writeInt(MAGIC_NUMBER);</span><br><span class="line">        byteBuf.writeByte(packet.getVersion());</span><br><span class="line">        byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());</span><br><span class="line">        byteBuf.writeByte(packet.getCommand());</span><br><span class="line">        byteBuf.writeInt(bytes.length);</span><br><span class="line">        byteBuf.writeBytes(bytes);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> byteBuf;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Packet <span class="title">decode</span><span class="params">(ByteBuf byteBuf)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//1. 跳过魔数</span></span><br><span class="line">        byteBuf.skipBytes(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2. 跳过版本号</span></span><br><span class="line">        byteBuf.skipBytes(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//3. 获取序列化算法    readIndex向前移动一位</span></span><br><span class="line">        <span class="keyword">byte</span> serializeAlgorithm = byteBuf.readByte();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//4. 获取指令   readIndex向前移动一位</span></span><br><span class="line">        <span class="keyword">byte</span> command = byteBuf.readByte();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//5. 获取有效数据包长度</span></span><br><span class="line">        <span class="keyword">int</span> length = byteBuf.readInt();</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * 6. 重新构建一个新的字节包</span></span><br><span class="line"><span class="comment">        *       构建一个字节长度为length的数组</span></span><br><span class="line"><span class="comment">        *       把ByteBuf的剩余数据 写入这个新建的数组中</span></span><br><span class="line"><span class="comment">        * */</span></span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[length];</span><br><span class="line">        byteBuf.readBytes(bytes);</span><br><span class="line"></span><br><span class="line">        Class&lt;? extends Packet&gt; requestType = getRequestType(command);</span><br><span class="line">        Serializer serializer = getSerializer(serializeAlgorithm);</span><br><span class="line">        <span class="keyword">if</span> (requestType != <span class="keyword">null</span> &amp;&amp; serializer != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> serializer.deserialize(requestType, bytes);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Serializer <span class="title">getSerializer</span><span class="params">(<span class="keyword">byte</span> serializeAlgorithm)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> serializerMap.get(serializeAlgorithm);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Class&lt;? extends Packet&gt; getRequestType(<span class="keyword">byte</span> command) &#123;</span><br><span class="line">        <span class="keyword">return</span> packetTypeMap.get(command);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2019/07/26/Netty属性总计/" rel="next" title="Netty之内含属性">
+                <i class="fa fa-chevron-left"></i> Netty之内含属性
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/blog/2019/07/26/趣谈网络协议/" rel="prev" title="浅记--趣谈网络协议		长期更新....">
+                浅记--趣谈网络协议		长期更新.... <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">小码</p>
+              <p class="site-description motion-element" itemprop="description">点滴记录，汇聚分享</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/blog/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#通讯协议的定义与设计"><span class="nav-number">1.</span> <span class="nav-text">通讯协议的定义与设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通讯过程中的Java对象"><span class="nav-number">2.</span> <span class="nav-text">通讯过程中的Java对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列化"><span class="nav-number">3.</span> <span class="nav-text">序列化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编码：封装成二进制的过程"><span class="nav-number">4.</span> <span class="nav-text">编码：封装成二进制的过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解码：将二进制数据包解析为Java对象的过程"><span class="nav-number">5.</span> <span class="nav-text">解码：将二进制数据包解析为Java对象的过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附–编解码实现逻辑代码："><span class="nav-number">6.</span> <span class="nav-text">附–编解码实现逻辑代码：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小码</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/blog/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/blog/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/blog/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

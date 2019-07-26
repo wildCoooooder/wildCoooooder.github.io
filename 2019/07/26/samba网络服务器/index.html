@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="description" content="驱动下载链接  源码编译三部曲 tar xvf &amp;lt;tar.gz&amp;gt;      解压后进入相应的目录下  ./configure –prefix==  设置安装的目标文件夹，选择需要安装的功能模块   make  根据前一步的选定，将源代码变成可执行的二进制文件   make install  将编译好的二进制文件复制到系统中，并设置应用环境       安装samba套件,设置共享文件夹">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://wildecu.gitee.io/blog/2019/07/26/hello-world/index.html">
+<meta property="og:title" content="samba 网络服务器共享Linux、Windows文件">
+<meta property="og:url" content="http://wildecu.gitee.io/blog/2019/07/26/samba网络服务器/index.html">
 <meta property="og:site_name" content="小码">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="驱动下载链接  源码编译三部曲 tar xvf &amp;lt;tar.gz&amp;gt;      解压后进入相应的目录下  ./configure –prefix==  设置安装的目标文件夹，选择需要安装的功能模块   make  根据前一步的选定，将源代码变成可执行的二进制文件   make install  将编译好的二进制文件复制到系统中，并设置应用环境       安装samba套件,设置共享文件夹">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-07-26T02:02:59.610Z">
+<meta property="og:updated_time" content="2019-05-14T14:15:58.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="samba 网络服务器共享Linux、Windows文件">
+<meta name="twitter:description" content="驱动下载链接  源码编译三部曲 tar xvf &amp;lt;tar.gz&amp;gt;      解压后进入相应的目录下  ./configure –prefix==  设置安装的目标文件夹，选择需要安装的功能模块   make  根据前一步的选定，将源代码变成可执行的二进制文件   make install  将编译好的二进制文件复制到系统中，并设置应用环境       安装samba套件,设置共享文件夹">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://wildecu.gitee.io/blog/2019/07/26/hello-world/">
+  <link rel="canonical" href="http://wildecu.gitee.io/blog/2019/07/26/samba网络服务器/">
 
 
 
 
 
-  <title>Hello World | 小码</title>
+  <title>samba 网络服务器共享Linux、Windows文件 | 小码</title>
   
 
 
@@ -232,7 +232,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://wildecu.gitee.io/blog/blog/2019/07/26/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://wildecu.gitee.io/blog/blog/2019/07/26/samba网络服务器/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="小码">
@@ -249,7 +249,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Hello World</h1>
+          <h1 class="post-title" itemprop="name headline">samba 网络服务器共享Linux、Windows文件</h1>
         
 
         <div class="post-meta">
@@ -261,7 +261,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-26T10:05:11+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-26T10:56:18+08:00">
                 2019-07-26
               </time>
             
@@ -299,20 +299,33 @@
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
+        <p><a href="https://github.com/lwfinger/rtl8192du" target="_blank" rel="noopener">驱动下载链接</a></p>
+<ol>
+<li><p>源码编译三部曲</p>
+<p>tar xvf &lt;tar.gz&gt; <path>     解压后进入相应的目录下</path></p>
+<ul>
+<li><p>./configure –prefix==<path></path></p>
+<ul>
+<li>设置安装的目标文件夹，选择需要安装的功能模块</li>
+</ul>
+</li>
+<li><p>make</p>
+<ul>
+<li>根据前一步的选定，将源代码变成可执行的二进制文件</li>
+</ul>
+</li>
+<li><p>make install</p>
+<ul>
+<li>将编译好的二进制文件复制到系统中，并设置应用环境</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<ol start="2">
+<li>安装samba套件,设置共享文件夹</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#安装 samba 和 samba-client</span></span></span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#添加samba用户（需要是系统用户）,设置登陆密码</span></span></span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#启动</span></span></span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#设置共享文件夹，给与权限</span></span></span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -336,14 +349,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/blog/2019/07/26/ubuntu18.04 安装MySQL/" rel="next" title="Ubuntu18.04 安装MySQL与默认编码设置">
+                <i class="fa fa-chevron-left"></i> Ubuntu18.04 安装MySQL与默认编码设置
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/blog/2019/07/26/搭建hexo博客/" rel="prev" title="搭建Hexo博客">
-                搭建Hexo博客 <i class="fa fa-chevron-right"></i>
+              <a href="/blog/2019/07/26/Netty之通信案例/" rel="prev" title="Netty案例">
+                Netty案例 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -396,17 +413,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -448,22 +456,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
