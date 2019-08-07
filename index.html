@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://wildecu.gitee.io/blog/index.html">
 <meta property="og:site_name" content="BoardMan">
 <meta property="og:description" content="点滴记录，汇聚分享">
-<meta property="og:locale" content="default">
+<meta property="og:locale" content="zh-cn">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BoardMan">
 <meta name="twitter:description" content="点滴记录，汇聚分享">
@@ -151,94 +151,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-samba网络服务器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/blog/2019/07/26/samba网络服务器/">samba 网络服务器共享Linux、Windows文件</a>
-    </h1>
-  
-
-        
-        <a href="/blog/2019/07/26/samba网络服务器/" class="archive-article-date">
-  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="https://github.com/lwfinger/rtl8192du" target="_blank" rel="noopener">驱动下载链接</a></p>
-<ol>
-<li><p>源码编译三部曲</p>
-<p>tar xvf &lt;tar.gz&gt; <path>     解压后进入相应的目录下</path></p>
-<ul>
-<li><p>./configure –prefix==<path></path></p>
-<ul>
-<li>设置安装的目标文件夹，选择需要安装的功能模块</li>
-</ul>
-</li>
-<li><p>make</p>
-<ul>
-<li>根据前一步的选定，将源代码变成可执行的二进制文件</li>
-</ul>
-</li>
-<li><p>make install</p>
-<ul>
-<li>将编译好的二进制文件复制到系统中，并设置应用环境</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-<ol start="2">
-<li>安装samba套件,设置共享文件夹</li>
-</ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>#安装 samba 和 samba-client</span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#添加samba用户（需要是系统用户）,设置登陆密码</span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#启动</span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#设置共享文件夹，给与权限</span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/blog/2019/07/26/samba网络服务器/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-Netty之ByteBuf介绍" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -246,20 +158,20 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/blog/2019/07/26/Netty之ByteBuf介绍/">Netty数据传输载体--ByteBuf</a>
+      <a class="article-title" href="/blog/2019/08/07/Netty之ByteBuf介绍/">Netty数据传输载体--ByteBuf</a>
     </h1>
   
 
         
-        <a href="/blog/2019/07/26/Netty之ByteBuf介绍/" class="archive-article-date">
-  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
+        <a href="/blog/2019/08/07/Netty之ByteBuf介绍/" class="archive-article-date">
+  	<time datetime="2019-08-07T09:32:34.971Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-07</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="ByteBuf结构"><a href="#ByteBuf结构" class="headerlink" title="ByteBuf结构"></a>ByteBuf结构</h3><p><img src="../images/ByteBuf%E7%BB%93%E6%9E%84.png" alt="ByteBuf结构"></p>
+        <h3 id="ByteBuf结构"><a href="#ByteBuf结构" class="headerlink" title="ByteBuf结构"></a>ByteBuf结构</h3><p><img src="../images/ByteBuf.png" alt="ByteBuf结构"></p>
 <p>ByteBuf结构图如上，可分为三个部分：</p>
 <blockquote>
 <ul>
@@ -346,7 +258,133 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/blog/2019/07/26/Netty之ByteBuf介绍/">展开全文 >></a>
+          <a class="article-more-a" href="/blog/2019/08/07/Netty之ByteBuf介绍/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-搭建hexo博客" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2019/07/26/搭建hexo博客/">搭建Hexo博客</a>
+    </h1>
+  
+
+        
+        <a href="/blog/2019/07/26/搭建hexo博客/" class="archive-article-date">
+  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>​        Node.js    Git    Hexo</p>
+<hr>
+<h3 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h3><ul>
+<li><p>更换下载源为taobao（使用cnpm）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h3><ul>
+<li><p>设置本地Git账户</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name "&lt;github用户名&gt;"</span><br><span class="line">git config --global user.email "&lt;github邮箱地址&gt;"</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>设置将来的免密部署</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">配置SSH</span></span><br><span class="line">ssh-keygen -t rsa -C "&lt;github邮箱地址&gt;"</span><br><span class="line"><span class="meta">#</span><span class="bash">复制SSH密匙到GitHub的SSH设置中</span></span><br><span class="line">/home/&lt;USER&gt;/.ssh/id_rsa.pub</span><br><span class="line"><span class="meta">#</span><span class="bash">生成配置文件，保存密码</span></span><br><span class="line">touch .git-credentials</span><br><span class="line">vim .git-credentials</span><br><span class="line">	输入：https://&lt;username&gt;:&lt;password&gt;@github.com</span><br><span class="line"><span class="meta">#</span><span class="bash"> 保存</span></span><br><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h3><ul>
+<li><p>利用cnpm准备</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">安装</span></span><br><span class="line">cnpm install -g hexo-cli</span><br><span class="line"><span class="meta">#</span><span class="bash">检查</span></span><br><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>创建文件夹，生成博客</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">生成, 自动克隆到指定位置</span></span><br><span class="line">sudo init </span><br><span class="line"><span class="meta">#</span><span class="bash">创建 new</span></span><br><span class="line">hexo n "&lt;文章名称&gt;"</span><br><span class="line"><span class="meta">#</span><span class="bash">生成博客 generate</span></span><br><span class="line">hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash">刷新 clean</span></span><br><span class="line">hexo clean</span><br><span class="line"><span class="meta">#</span><span class="bash">启动 start</span></span><br><span class="line">hexo s</span><br><span class="line"><span class="meta">#</span><span class="bash">部署 deploy</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>部署到Github</p>
+<ol>
+<li>安装本地插件</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cnpm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>修改_configure.yml文件  </li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Deployment</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># Docs: https://hexo.io/docs/deployment.html</span></span></span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/wildCoooooder/wildCoooooder.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>部署  </li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br><span class="line"><span class="meta">#</span><span class="bash">输入Github 账户密码</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<hr>
+<h2 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h2><p>选用yilia主题    <a href="https://github.com/litten/hexo-theme-yilia" target="_blank" rel="noopener">GitHub地址</a></p>
+<ul>
+<li><p>克隆到本地 themes文件夹下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/litten/hexo-theme-yilia.git &lt;THEMES_PATH&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改_configure.yml文件，themes更改为主题名称</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: yilia</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重新clean、生成、部署</p>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/blog/2019/07/26/搭建hexo博客/">展开全文 >></a>
         </p>
       
 
@@ -476,128 +514,6 @@
 
 
   
-    <article id="post-Netty属性总计" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/blog/2019/07/26/Netty属性总计/">Netty之内含属性</a>
-    </h1>
-  
-
-        
-        <a href="/blog/2019/07/26/Netty属性总计/" class="archive-article-date">
-  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="pipeline-与-channelHandler"><a href="#pipeline-与-channelHandler" class="headerlink" title="pipeline 与 channelHandler"></a>pipeline 与 channelHandler</h2><p>如果对数据包的判断都写在一个类中，通过if else 分类再实现相应的业务逻辑会导致以下问题：</p>
-<blockquote>
-<ul>
-<li>代码臃肿</li>
-<li>不利于后期功能拓展</li>
-</ul>
-</blockquote>
-<p>使用pipeline 与 channelHandler</p>
-<blockquote>
-<p>通过责任链设计模式来组织代码逻辑，并且能够支持逻辑的动态添加和删除</p>
-<p>Netty中支持各种协议的拓展，如Redis、HTTP、WebSocket</p>
-</blockquote>
-<p>构成：</p>
-<p><img src="../images/pipeline%E6%9E%84%E6%88%90.png" alt="pipeline.png"></p>
-<p>Netty框架中一条链对应一个channel，链中的所有处理逻辑都在ChannelPipeline的对象中（是一个双向链表，与Channel为一对一的关系）</p>
-<p>ChannelPipeline的分类：</p>
-<p><img src="../images/ChannelPipeline%E5%88%86%E7%B1%BB.png" alt="ChannelPipeline"></p>
-<p>ChannelPipeline有两大子接口，ChannelInboundHandler与ChannelOutBoundHandler。。 两大子接口都有默认实现</p>
-<p>ChannelInboundHandlerAdapter与ChanneloutBoundHandlerAdapter</p>
-<blockquote>
-<ul>
-<li>ChannelInboundHandler    处理读数据的逻辑，最重要的方法是channelRead()，顺序执行</li>
-<li>ChannelOutBoundHandler     处理写数据的逻辑，最重要的方法是write()，逆序执行</li>
-</ul>
-</blockquote>
-<h2 id="粘包与拆包"><a href="#粘包与拆包" class="headerlink" title="粘包与拆包"></a>粘包与拆包</h2><p>Netty中虽然使用ByteBuf为单位进行发送，但对于操作系统来说最终还是要通过TCP协议发送数据，按照字节流发送数据。数据到了服务端，以字节流的形式读入，重新拼装成ByteBuf，在这一整个过程中可能会出现顺序不对等的情况。因此，需要在应用层指定协议，客户端根据协议来组装数据包称为粘包，服务端根据协议组装数据包称为拆包。</p>
-<blockquote>
-<p>比如，发送端将3个数据包粘成2个TCP数据包发送到接收端，接收端就需要根据应用协议将2个数据包重新组装为3个数据包。</p>
-</blockquote>
-<h2 id="Netty中自带的拆包器"><a href="#Netty中自带的拆包器" class="headerlink" title="Netty中自带的拆包器"></a>Netty中自带的拆包器</h2><blockquote>
-<ul>
-<li>基于长度域拆包器 LengthFieldBasedFrameDecoder 最常用</li>
-<li>固定长度的拆包器 FixedLengthFrameDecoder</li>
-<li>行拆包器 LineBasedFrameDecoder</li>
-<li>分隔符拆包器 DelimiterBasedFrameDecoder</li>
-</ul>
-</blockquote>
-<h2 id="ChannelHandler的生命周期"><a href="#ChannelHandler的生命周期" class="headerlink" title="ChannelHandler的生命周期"></a>ChannelHandler的生命周期</h2><p>handlerAdded() -&gt; channelRegistered() -&gt; channelActive() -&gt; channelRead() -&gt; channelReadComplete()-&gt;</p>
-<p>channelInactive() -&gt; channelUnregistered() -&gt; handlerRemoved()</p>
-<blockquote>
-<ol>
-<li><code>handlerAdded()</code> ：当检测到新连接之后回调，表示在当前channel中添加了一个handler处理器<ul>
-<li>可用于一些资源的申请和释放</li>
-</ul>
-</li>
-<li><code>channelRegistered()</code>：表示当前的 channel 的所有的逻辑处理已经和某个 NIO 线程建立了绑定关系， Netty 里面是使用了线程池的方式，只需要从线程池里面去抓一个线程绑定在这个 channel 上即可</li>
-<li><code>channelActive()</code>：当 channel 的所有的业务逻辑链准备完毕（也就是说 channel 的 pipeline 中已经添加完所有的 handler）以及绑定好一个 NIO 线程之后，这条连接算是真正激活了，接下来就会回调到此方法。<ul>
-<li>可用于连接数的统计，每建立一次连接，该方法被调用一次，连接数加一</li>
-</ul>
-</li>
-<li><code>channelRead()</code>：客户端向服务端发来数据，每次都会回调此方法，表示有数据可读。<ul>
-<li>拆包就在这个方法中进行，根据自定义的协议来进行拆包，每次读取到的数据都会累加到一个容器里面，然后判断能否拆除一个完整的数据包，如果够了就往下传递。</li>
-</ul>
-</li>
-<li><code>channelReadComplete()</code>：服务端每次读完一次完整的数据之后，回调该方法，表示数据读取完毕。</li>
-<li><code>channelInactive()</code>: 表面这条连接已经被关闭了，这条连接在 TCP 层面已经不再是 ESTABLISH 状态了</li>
-<li><code>channelUnregistered()</code>: 表明与这条连接对应的 NIO 线程移除掉对这条连接的处理</li>
-<li><code>handlerRemoved()</code>：最后，我们给这条连接上添加的所有的业务逻辑处理器都给移除掉。</li>
-</ol>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/blog/2019/07/26/Netty属性总计/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-Netty简例" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -696,6 +612,128 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/blog/2019/07/26/Netty简例/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Netty属性总计" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2019/07/26/Netty属性总计/">Netty之内含属性</a>
+    </h1>
+  
+
+        
+        <a href="/blog/2019/07/26/Netty属性总计/" class="archive-article-date">
+  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="pipeline-与-channelHandler"><a href="#pipeline-与-channelHandler" class="headerlink" title="pipeline 与 channelHandler"></a>pipeline 与 channelHandler</h2><p>如果对数据包的判断都写在一个类中，通过if else 分类再实现相应的业务逻辑会导致以下问题：</p>
+<blockquote>
+<ul>
+<li>代码臃肿</li>
+<li>不利于后期功能拓展</li>
+</ul>
+</blockquote>
+<p>使用pipeline 与 channelHandler</p>
+<blockquote>
+<p>通过责任链设计模式来组织代码逻辑，并且能够支持逻辑的动态添加和删除</p>
+<p>Netty中支持各种协议的拓展，如Redis、HTTP、WebSocket</p>
+</blockquote>
+<p>构成：</p>
+<p><img src="../images/pipeline%E6%9E%84%E6%88%90.png" alt="pipeline.png"></p>
+<p>Netty框架中一条链对应一个channel，链中的所有处理逻辑都在ChannelPipeline的对象中（是一个双向链表，与Channel为一对一的关系）</p>
+<p>ChannelPipeline的分类：</p>
+<p><img src="../images/ChannelPipeline%E5%88%86%E7%B1%BB.png" alt="ChannelPipeline"></p>
+<p>ChannelPipeline有两大子接口，ChannelInboundHandler与ChannelOutBoundHandler。。 两大子接口都有默认实现</p>
+<p>ChannelInboundHandlerAdapter与ChanneloutBoundHandlerAdapter</p>
+<blockquote>
+<ul>
+<li>ChannelInboundHandler    处理读数据的逻辑，最重要的方法是channelRead()，顺序执行</li>
+<li>ChannelOutBoundHandler     处理写数据的逻辑，最重要的方法是write()，逆序执行</li>
+</ul>
+</blockquote>
+<h2 id="粘包与拆包"><a href="#粘包与拆包" class="headerlink" title="粘包与拆包"></a>粘包与拆包</h2><p>Netty中虽然使用ByteBuf为单位进行发送，但对于操作系统来说最终还是要通过TCP协议发送数据，按照字节流发送数据。数据到了服务端，以字节流的形式读入，重新拼装成ByteBuf，在这一整个过程中可能会出现顺序不对等的情况。因此，需要在应用层指定协议，客户端根据协议来组装数据包称为粘包，服务端根据协议组装数据包称为拆包。</p>
+<blockquote>
+<p>比如，发送端将3个数据包粘成2个TCP数据包发送到接收端，接收端就需要根据应用协议将2个数据包重新组装为3个数据包。</p>
+</blockquote>
+<h2 id="Netty中自带的拆包器"><a href="#Netty中自带的拆包器" class="headerlink" title="Netty中自带的拆包器"></a>Netty中自带的拆包器</h2><blockquote>
+<ul>
+<li>基于长度域拆包器 LengthFieldBasedFrameDecoder 最常用</li>
+<li>固定长度的拆包器 FixedLengthFrameDecoder</li>
+<li>行拆包器 LineBasedFrameDecoder</li>
+<li>分隔符拆包器 DelimiterBasedFrameDecoder</li>
+</ul>
+</blockquote>
+<h2 id="ChannelHandler的生命周期"><a href="#ChannelHandler的生命周期" class="headerlink" title="ChannelHandler的生命周期"></a>ChannelHandler的生命周期</h2><p>handlerAdded() -&gt; channelRegistered() -&gt; channelActive() -&gt; channelRead() -&gt; channelReadComplete()-&gt;</p>
+<p>channelInactive() -&gt; channelUnregistered() -&gt; handlerRemoved()</p>
+<blockquote>
+<ol>
+<li><code>handlerAdded()</code> ：当检测到新连接之后回调，表示在当前channel中添加了一个handler处理器<ul>
+<li>可用于一些资源的申请和释放</li>
+</ul>
+</li>
+<li><code>channelRegistered()</code>：表示当前的 channel 的所有的逻辑处理已经和某个 NIO 线程建立了绑定关系， Netty 里面是使用了线程池的方式，只需要从线程池里面去抓一个线程绑定在这个 channel 上即可</li>
+<li><code>channelActive()</code>：当 channel 的所有的业务逻辑链准备完毕（也就是说 channel 的 pipeline 中已经添加完所有的 handler）以及绑定好一个 NIO 线程之后，这条连接算是真正激活了，接下来就会回调到此方法。<ul>
+<li>可用于连接数的统计，每建立一次连接，该方法被调用一次，连接数加一</li>
+</ul>
+</li>
+<li><code>channelRead()</code>：客户端向服务端发来数据，每次都会回调此方法，表示有数据可读。<ul>
+<li>拆包就在这个方法中进行，根据自定义的协议来进行拆包，每次读取到的数据都会累加到一个容器里面，然后判断能否拆除一个完整的数据包，如果够了就往下传递。</li>
+</ul>
+</li>
+<li><code>channelReadComplete()</code>：服务端每次读完一次完整的数据之后，回调该方法，表示数据读取完毕。</li>
+<li><code>channelInactive()</code>: 表面这条连接已经被关闭了，这条连接在 TCP 层面已经不再是 ESTABLISH 状态了</li>
+<li><code>channelUnregistered()</code>: 表明与这条连接对应的 NIO 线程移除掉对这条连接的处理</li>
+<li><code>handlerRemoved()</code>：最后，我们给这条连接上添加的所有的业务逻辑处理器都给移除掉。</li>
+</ol>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/blog/2019/07/26/Netty属性总计/">展开全文 >></a>
         </p>
       
 
@@ -856,19 +894,19 @@
 
 
   
-    <article id="post-搭建hexo博客" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-samba网络服务器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/blog/2019/07/26/搭建hexo博客/">搭建Hexo博客</a>
+      <a class="article-title" href="/blog/2019/07/26/samba网络服务器/">samba 网络服务器共享Linux、Windows文件</a>
     </h1>
   
 
         
-        <a href="/blog/2019/07/26/搭建hexo博客/" class="archive-article-date">
+        <a href="/blog/2019/07/26/samba网络服务器/" class="archive-article-date">
   	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
 </a>
         
@@ -876,71 +914,33 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>​        Node.js    Git    Hexo</p>
-<hr>
-<h3 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h3><ul>
-<li><p>更换下载源为taobao（使用cnpm）</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h3 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h3><ul>
-<li><p>设置本地Git账户</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name "&lt;github用户名&gt;"</span><br><span class="line">git config --global user.email "&lt;github邮箱地址&gt;"</span><br></pre></td></tr></table></figure>
-
-
-</li>
-</ul>
-<ul>
-<li><p>设置将来的免密部署</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">配置SSH</span></span><br><span class="line">ssh-keygen -t rsa -C "&lt;github邮箱地址&gt;"</span><br><span class="line"><span class="meta">#</span><span class="bash">复制SSH密匙到GitHub的SSH设置中</span></span><br><span class="line">/home/&lt;USER&gt;/.ssh/id_rsa.pub</span><br><span class="line"><span class="meta">#</span><span class="bash">生成配置文件，保存密码</span></span><br><span class="line">touch .git-credentials</span><br><span class="line">vim .git-credentials</span><br><span class="line">	输入：https://&lt;username&gt;:&lt;password&gt;@github.com</span><br><span class="line"><span class="meta">#</span><span class="bash"> 保存</span></span><br><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h3 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h3><ul>
-<li><p>利用cnpm准备</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">安装</span></span><br><span class="line">cnpm install -g hexo-cli</span><br><span class="line"><span class="meta">#</span><span class="bash">检查</span></span><br><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
-
-
-</li>
-</ul>
-<ul>
-<li><p>创建文件夹，生成博客</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">生成, 自动克隆到指定位置</span></span><br><span class="line">sudo init </span><br><span class="line"><span class="meta">#</span><span class="bash">创建 new</span></span><br><span class="line">hexo n "&lt;文章名称&gt;"</span><br><span class="line"><span class="meta">#</span><span class="bash">生成博客 generate</span></span><br><span class="line">hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash">刷新 clean</span></span><br><span class="line">hexo clean</span><br><span class="line"><span class="meta">#</span><span class="bash">启动 start</span></span><br><span class="line">hexo s</span><br><span class="line"><span class="meta">#</span><span class="bash">部署 deploy</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<ul>
-<li><p>部署到Github</p>
+        <p><a href="https://github.com/lwfinger/rtl8192du" target="_blank" rel="noopener">驱动下载链接</a></p>
 <ol>
-<li>安装本地插件</li>
-</ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cnpm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>修改_configure.yml文件  </li>
-</ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Deployment</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># Docs: https://hexo.io/docs/deployment.html</span></span></span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/wildCoooooder/wildCoooooder.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li>部署  </li>
-</ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br><span class="line"><span class="meta">#</span><span class="bash">输入Github 账户密码</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<hr>
-<h2 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h2><p>选用yilia主题    <a href="https://github.com/litten/hexo-theme-yilia" target="_blank" rel="noopener">GitHub地址</a></p>
+<li><p>源码编译三部曲</p>
+<p>tar xvf &lt;tar.gz&gt; <path>     解压后进入相应的目录下</path></p>
 <ul>
-<li><p>克隆到本地 themes文件夹下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/litten/hexo-theme-yilia.git &lt;THEMES_PATH&gt;</span><br></pre></td></tr></table></figure>
+<li><p>./configure –prefix==<path></path></p>
+<ul>
+<li>设置安装的目标文件夹，选择需要安装的功能模块</li>
+</ul>
 </li>
-<li><p>修改_configure.yml文件，themes更改为主题名称</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: yilia</span><br></pre></td></tr></table></figure>
+<li><p>make</p>
+<ul>
+<li>根据前一步的选定，将源代码变成可执行的二进制文件</li>
+</ul>
 </li>
-<li><p>重新clean、生成、部署</p>
+<li><p>make install</p>
+<ul>
+<li>将编译好的二进制文件复制到系统中，并设置应用环境</li>
+</ul>
 </li>
 </ul>
-
+</li>
+</ol>
+<ol start="2">
+<li>安装samba套件,设置共享文件夹</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#安装 samba 和 samba-client</span></span></span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#添加samba用户（需要是系统用户）,设置登陆密码</span></span></span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#启动</span></span></span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#设置共享文件夹，给与权限</span></span></span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -952,7 +952,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/blog/2019/07/26/搭建hexo博客/">展开全文 >></a>
+          <a class="article-more-a" href="/blog/2019/07/26/samba网络服务器/">展开全文 >></a>
         </p>
       
 

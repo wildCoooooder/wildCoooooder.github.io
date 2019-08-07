@@ -11,16 +11,16 @@
   <meta name="description" content="ByteBuf结构 ByteBuf结构图如上，可分为三个部分：   废弃、可读、可写 三个 部分由两个指针划分（readIndex、writeIndex）还有一个变量capacity代表底层内存容量 在ByteBuf中每read或write一次，对应的指针自增1 当writeIndex指针到达capacity后，表示ByteBuf不可再写。但是若存在maxCapacity则可以自动扩容   常用A">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Netty数据传输载体--ByteBuf">
-<meta property="og:url" content="https://wildecu.gitee.io/blog/2019/07/26/Netty之ByteBuf介绍/index.html">
+<meta property="og:url" content="https://wildecu.gitee.io/blog/2019/08/07/Netty之ByteBuf介绍/index.html">
 <meta property="og:site_name" content="BoardMan">
 <meta property="og:description" content="ByteBuf结构 ByteBuf结构图如上，可分为三个部分：   废弃、可读、可写 三个 部分由两个指针划分（readIndex、writeIndex）还有一个变量capacity代表底层内存容量 在ByteBuf中每read或write一次，对应的指针自增1 当writeIndex指针到达capacity后，表示ByteBuf不可再写。但是若存在maxCapacity则可以自动扩容   常用A">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="https://wildecu.gitee.io/blog/2019/07/26/images/ByteBuf%E7%BB%93%E6%9E%84.png">
-<meta property="og:updated_time" content="2019-07-26T02:41:58.294Z">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="https://wildecu.gitee.io/blog/2019/08/07/images/ByteBuf.png">
+<meta property="og:updated_time" content="2019-08-07T09:32:34.971Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Netty数据传输载体--ByteBuf">
 <meta name="twitter:description" content="ByteBuf结构 ByteBuf结构图如上，可分为三个部分：   废弃、可读、可写 三个 部分由两个指针划分（readIndex、writeIndex）还有一个变量capacity代表底层内存容量 在ByteBuf中每read或write一次，对应的指针自增1 当writeIndex指针到达capacity后，表示ByteBuf不可再写。但是若存在maxCapacity则可以自动扩容   常用A">
-<meta name="twitter:image" content="https://wildecu.gitee.io/blog/2019/07/26/images/ByteBuf%E7%BB%93%E6%9E%84.png">
+<meta name="twitter:image" content="https://wildecu.gitee.io/blog/2019/08/07/images/ByteBuf.png">
   
     <link rel="alternative" href="/atom.xml" title="BoardMan" type="application/atom+xml">
   
@@ -164,15 +164,15 @@
   
 
         
-        <a href="/blog/2019/07/26/Netty之ByteBuf介绍/" class="archive-article-date">
-  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
+        <a href="/blog/2019/08/07/Netty之ByteBuf介绍/" class="archive-article-date">
+  	<time datetime="2019-08-07T09:32:34.971Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-07</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="ByteBuf结构"><a href="#ByteBuf结构" class="headerlink" title="ByteBuf结构"></a>ByteBuf结构</h3><p><img src="../images/ByteBuf%E7%BB%93%E6%9E%84.png" alt="ByteBuf结构"></p>
+        <h3 id="ByteBuf结构"><a href="#ByteBuf结构" class="headerlink" title="ByteBuf结构"></a>ByteBuf结构</h3><p><img src="../images/ByteBuf.png" alt="ByteBuf结构"></p>
 <p>ByteBuf结构图如上，可分为三个部分：</p>
 <blockquote>
 <ul>
@@ -305,7 +305,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://wildecu.gitee.io/blog/2019/07/26/Netty之ByteBuf介绍/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://wildecu.gitee.io/blog/2019/08/07/Netty之ByteBuf介绍/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -319,18 +319,9 @@
   
 <nav id="article-nav">
   
-    <a href="/blog/2019/07/26/samba网络服务器/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          samba 网络服务器共享Linux、Windows文件
-        
-      </div>
-    </a>
   
-  
-    <a href="/blog/2019/07/26/Netty之通信案例/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Netty案例</div>
+    <a href="/blog/2019/07/26/搭建hexo博客/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">搭建Hexo博客</div>
       <i class="icon-circle-right"></i>
     </a>
   
