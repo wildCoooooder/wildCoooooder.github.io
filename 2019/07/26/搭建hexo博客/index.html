@@ -187,20 +187,20 @@
 </ul>
 <ul>
 <li><p>设置将来的免密部署</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>配置SSH</span><br><span class="line">ssh-keygen -t rsa -C "&lt;github邮箱地址&gt;"</span><br><span class="line"><span class="meta">#</span>复制SSH密匙到GitHub的SSH设置中</span><br><span class="line">/home/&lt;USER&gt;/.ssh/id_rsa.pub</span><br><span class="line"><span class="meta">#</span>生成配置文件，保存密码</span><br><span class="line">touch .git-credentials</span><br><span class="line">vim .git-credentials</span><br><span class="line">	输入：https://&lt;username&gt;:&lt;password&gt;@github.com</span><br><span class="line"><span class="meta">#</span> 保存</span><br><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">配置SSH</span></span><br><span class="line">ssh-keygen -t rsa -C "&lt;github邮箱地址&gt;"</span><br><span class="line"><span class="meta">#</span><span class="bash">复制SSH密匙到GitHub的SSH设置中</span></span><br><span class="line">/home/&lt;USER&gt;/.ssh/id_rsa.pub</span><br><span class="line"><span class="meta">#</span><span class="bash">生成配置文件，保存密码</span></span><br><span class="line">touch .git-credentials</span><br><span class="line">vim .git-credentials</span><br><span class="line">	输入：https://&lt;username&gt;:&lt;password&gt;@github.com</span><br><span class="line"><span class="meta">#</span><span class="bash"> 保存</span></span><br><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
 
 </li>
 </ul>
 <h3 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h3><ul>
 <li><p>利用cnpm准备</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>安装</span><br><span class="line">cnpm install -g hexo-cli</span><br><span class="line"><span class="meta">#</span>检查</span><br><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">安装</span></span><br><span class="line">cnpm install -g hexo-cli</span><br><span class="line"><span class="meta">#</span><span class="bash">检查</span></span><br><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
 
 
 </li>
 </ul>
 <ul>
 <li><p>创建文件夹，生成博客</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>生成, 自动克隆到指定位置</span><br><span class="line">sudo init </span><br><span class="line"><span class="meta">#</span>创建 new</span><br><span class="line">hexo n "&lt;文章名称&gt;"</span><br><span class="line"><span class="meta">#</span>生成博客 generate</span><br><span class="line">hexo g</span><br><span class="line"><span class="meta">#</span>刷新 clean</span><br><span class="line">hexo clean</span><br><span class="line"><span class="meta">#</span>启动 start</span><br><span class="line">hexo s</span><br><span class="line"><span class="meta">#</span>部署 deploy</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">生成, 自动克隆到指定位置</span></span><br><span class="line">sudo init </span><br><span class="line"><span class="meta">#</span><span class="bash">创建 new</span></span><br><span class="line">hexo n "&lt;文章名称&gt;"</span><br><span class="line"><span class="meta">#</span><span class="bash">生成博客 generate</span></span><br><span class="line">hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash">刷新 clean</span></span><br><span class="line">hexo clean</span><br><span class="line"><span class="meta">#</span><span class="bash">启动 start</span></span><br><span class="line">hexo s</span><br><span class="line"><span class="meta">#</span><span class="bash">部署 deploy</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 <ul>
@@ -213,12 +213,12 @@
 <ol start="2">
 <li>修改_configure.yml文件  </li>
 </ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> Deployment</span><br><span class="line"><span class="meta">#</span># Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/wildCoooooder/wildCoooooder.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Deployment</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># Docs: https://hexo.io/docs/deployment.html</span></span></span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/wildCoooooder/wildCoooooder.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
 
 <ol start="3">
 <li>部署  </li>
 </ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br><span class="line"><span class="meta">#</span>输入Github 账户密码</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br><span class="line"><span class="meta">#</span><span class="bash">输入Github 账户密码</span></span><br></pre></td></tr></table></figure>
 
 </li>
 </ul>
@@ -316,8 +316,8 @@
     </a>
   
   
-    <a href="/2019/07/26/趣谈网络协议/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">浅记--趣谈网络协议		长期更新....</div>
+    <a href="/2019/07/26/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hello World</div>
       <i class="icon-circle-right"></i>
     </a>
   
