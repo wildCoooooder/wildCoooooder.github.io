@@ -5,13 +5,13 @@
   
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="dns-prefetch" href="http://wildecu.gitee.io/blog">
+  <link rel="dns-prefetch" href="https://wildecu.gitee.io/blog">
   <title>samba 网络服务器共享Linux、Windows文件 | BoardMan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="驱动下载链接  源码编译三部曲 tar xvf &amp;lt;tar.gz&amp;gt;      解压后进入相应的目录下  ./configure –prefix==  设置安装的目标文件夹，选择需要安装的功能模块   make  根据前一步的选定，将源代码变成可执行的二进制文件   make install  将编译好的二进制文件复制到系统中，并设置应用环境       安装samba套件,设置共享文件夹">
 <meta property="og:type" content="article">
 <meta property="og:title" content="samba 网络服务器共享Linux、Windows文件">
-<meta property="og:url" content="http://wildecu.gitee.io/blog/2019/07/26/samba网络服务器/index.html">
+<meta property="og:url" content="https://wildecu.gitee.io/blog/2019/07/26/samba网络服务器/index.html">
 <meta property="og:site_name" content="BoardMan">
 <meta property="og:description" content="驱动下载链接  源码编译三部曲 tar xvf &amp;lt;tar.gz&amp;gt;      解压后进入相应的目录下  ./configure –prefix==  设置安装的目标文件夹，选择需要安装的功能模块   make  根据前一步的选定，将源代码变成可执行的二进制文件   make install  将编译好的二进制文件复制到系统中，并设置应用环境       安装samba套件,设置共享文件夹">
 <meta property="og:locale" content="default">
@@ -196,7 +196,7 @@
 <ol start="2">
 <li>安装samba套件,设置共享文件夹</li>
 </ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#安装 samba 和 samba-client</span></span></span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#添加samba用户（需要是系统用户）,设置登陆密码</span></span></span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#启动</span></span></span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#设置共享文件夹，给与权限</span></span></span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>#安装 samba 和 samba-client</span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#添加samba用户（需要是系统用户）,设置登陆密码</span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#启动</span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#设置共享文件夹，给与权限</span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -254,7 +254,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://wildecu.gitee.io/blog/2019/07/26/samba网络服务器/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://wildecu.gitee.io/blog/2019/07/26/samba网络服务器/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -268,18 +268,9 @@
   
 <nav id="article-nav">
   
-    <a href="/blog/2019/07/26/Netty之自定义通信协议/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Netty之通讯协议设计
-        
-      </div>
-    </a>
   
-  
-    <a href="/blog/2019/07/26/ubuntu18.04 安装MySQL/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Ubuntu18.04 安装MySQL与默认编码设置</div>
+    <a href="/blog/2019/07/26/Netty之ByteBuf介绍/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Netty数据传输载体--ByteBuf</div>
       <i class="icon-circle-right"></i>
     </a>
   

@@ -5,13 +5,13 @@
   
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="dns-prefetch" href="http://wildecu.gitee.io/blog">
+  <link rel="dns-prefetch" href="https://wildecu.gitee.io/blog">
   <title>BoardMan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="点滴记录，汇聚分享">
 <meta property="og:type" content="website">
 <meta property="og:title" content="BoardMan">
-<meta property="og:url" content="http://wildecu.gitee.io/blog/index.html">
+<meta property="og:url" content="https://wildecu.gitee.io/blog/index.html">
 <meta property="og:site_name" content="BoardMan">
 <meta property="og:description" content="点滴记录，汇聚分享">
 <meta property="og:locale" content="default">
@@ -151,6 +151,94 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-samba网络服务器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/blog/2019/07/26/samba网络服务器/">samba 网络服务器共享Linux、Windows文件</a>
+    </h1>
+  
+
+        
+        <a href="/blog/2019/07/26/samba网络服务器/" class="archive-article-date">
+  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://github.com/lwfinger/rtl8192du" target="_blank" rel="noopener">驱动下载链接</a></p>
+<ol>
+<li><p>源码编译三部曲</p>
+<p>tar xvf &lt;tar.gz&gt; <path>     解压后进入相应的目录下</path></p>
+<ul>
+<li><p>./configure –prefix==<path></path></p>
+<ul>
+<li>设置安装的目标文件夹，选择需要安装的功能模块</li>
+</ul>
+</li>
+<li><p>make</p>
+<ul>
+<li>根据前一步的选定，将源代码变成可执行的二进制文件</li>
+</ul>
+</li>
+<li><p>make install</p>
+<ul>
+<li>将编译好的二进制文件复制到系统中，并设置应用环境</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<ol start="2">
+<li>安装samba套件,设置共享文件夹</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>#安装 samba 和 samba-client</span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#添加samba用户（需要是系统用户）,设置登陆密码</span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#启动</span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#设置共享文件夹，给与权限</span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/blog/2019/07/26/samba网络服务器/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Netty之ByteBuf介绍" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -259,111 +347,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/blog/2019/07/26/Netty之ByteBuf介绍/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-趣谈网络协议" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/blog/2019/07/26/趣谈网络协议/">浅记--趣谈网络协议		长期更新....</a>
-    </h1>
-  
-
-        
-        <a href="/blog/2019/07/26/趣谈网络协议/" class="archive-article-date">
-  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Why-Networking-Protocol？"><a href="#Why-Networking-Protocol？" class="headerlink" title="Why Networking Protocol？"></a>Why Networking Protocol？</h2><h4 id="协议三要素"><a href="#协议三要素" class="headerlink" title="协议三要素"></a>协议三要素</h4><blockquote>
-<ul>
-<li>语法</li>
-<li>语义</li>
-<li>顺序</li>
-</ul>
-</blockquote>
-<h4 id="简例说明常用网络协议："><a href="#简例说明常用网络协议：" class="headerlink" title="简例说明常用网络协议："></a>简例说明常用网络协议：</h4><p>以网络购物为例：</p>
-<ul>
-<li><p>由URL到IP地址，使用一般的地址协议薄DNS查找，或者更精准的HTTPDNS，使用HTTP协议封装“购物需求”内容。称之为，应用层。</p>
-</li>
-<li><p>下一层为传输层，（TCP、UDP两种）内含浏览器监听端口和服务器监听端口。</p>
-</li>
-<li><p>下一层为网络层，IP协议。内含本机IP地址、目标IP地址。</p>
-</li>
-<li><p>下一层为MAC层，网关收到包再根据路由表判断目标IP的行走路径。由操作系统到网关是依据ARP协议：</p>
-<blockquote>
-<p>（ARP协议）</p>
-<p>操作系统在本地广播寻找网关</p>
-<p>网关收到广播会回复自己的MAC地址</p>
-<p>操作系统再根据MAC地址找到网关，把数据包发送给网关。</p>
-<p>路由协议中常用的也有OSPF、BGP</p>
-</blockquote>
-</li>
-<li><p>最后一个网关收到数据包后，对局域内进行广播。根据MAC地址找到目标IP机器。</p>
-<blockquote>
-<p>局域内广播</p>
-<p>目标IP机器回复MAC地址</p>
-<p>网关根据MAC地址找到目标服务器</p>
-</blockquote>
-</li>
-<li><p>目标服务器收到包后，依次取下MAC头、IP头，接着遇到封装的TCP协议。</p>
-</li>
-<li><p>将其转交给传输层，即TCP层。该层收到包后会有一个回应。同时，根据目标端口号找到对应的端口。</p>
-<blockquote>
-<p>如果目标端口号被电商网站的进程监听，如Tomcat，收到包内的信息后就进行后续的操作。</p>
-<p>如果告诉的是相关的进程，往往通过RPC调用，即远程调用的方式来实现，由远程框架统一处理。</p>
-</blockquote>
-</li>
-</ul>
-<p><img src="../images/TCP.png" alt="TCP头"></p>
-<p><img src="../images/IP.png" alt="IP头"> </p>
-<p><img src="../images/MAC.png" alt="MAC头"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/blog/2019/07/26/趣谈网络协议/">展开全文 >></a>
         </p>
       
 
@@ -873,19 +856,19 @@
 
 
   
-    <article id="post-samba网络服务器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-搭建hexo博客" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/blog/2019/07/26/samba网络服务器/">samba 网络服务器共享Linux、Windows文件</a>
+      <a class="article-title" href="/blog/2019/07/26/搭建hexo博客/">搭建Hexo博客</a>
     </h1>
   
 
         
-        <a href="/blog/2019/07/26/samba网络服务器/" class="archive-article-date">
+        <a href="/blog/2019/07/26/搭建hexo博客/" class="archive-article-date">
   	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
 </a>
         
@@ -893,33 +876,71 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="https://github.com/lwfinger/rtl8192du" target="_blank" rel="noopener">驱动下载链接</a></p>
+        <h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>​        Node.js    Git    Hexo</p>
+<hr>
+<h3 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h3><ul>
+<li><p>更换下载源为taobao（使用cnpm）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h3><ul>
+<li><p>设置本地Git账户</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name "&lt;github用户名&gt;"</span><br><span class="line">git config --global user.email "&lt;github邮箱地址&gt;"</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>设置将来的免密部署</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">配置SSH</span></span><br><span class="line">ssh-keygen -t rsa -C "&lt;github邮箱地址&gt;"</span><br><span class="line"><span class="meta">#</span><span class="bash">复制SSH密匙到GitHub的SSH设置中</span></span><br><span class="line">/home/&lt;USER&gt;/.ssh/id_rsa.pub</span><br><span class="line"><span class="meta">#</span><span class="bash">生成配置文件，保存密码</span></span><br><span class="line">touch .git-credentials</span><br><span class="line">vim .git-credentials</span><br><span class="line">	输入：https://&lt;username&gt;:&lt;password&gt;@github.com</span><br><span class="line"><span class="meta">#</span><span class="bash"> 保存</span></span><br><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h3><ul>
+<li><p>利用cnpm准备</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">安装</span></span><br><span class="line">cnpm install -g hexo-cli</span><br><span class="line"><span class="meta">#</span><span class="bash">检查</span></span><br><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li><p>创建文件夹，生成博客</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">生成, 自动克隆到指定位置</span></span><br><span class="line">sudo init </span><br><span class="line"><span class="meta">#</span><span class="bash">创建 new</span></span><br><span class="line">hexo n "&lt;文章名称&gt;"</span><br><span class="line"><span class="meta">#</span><span class="bash">生成博客 generate</span></span><br><span class="line">hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash">刷新 clean</span></span><br><span class="line">hexo clean</span><br><span class="line"><span class="meta">#</span><span class="bash">启动 start</span></span><br><span class="line">hexo s</span><br><span class="line"><span class="meta">#</span><span class="bash">部署 deploy</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>部署到Github</p>
 <ol>
-<li><p>源码编译三部曲</p>
-<p>tar xvf &lt;tar.gz&gt; <path>     解压后进入相应的目录下</path></p>
-<ul>
-<li><p>./configure –prefix==<path></path></p>
-<ul>
-<li>设置安装的目标文件夹，选择需要安装的功能模块</li>
-</ul>
-</li>
-<li><p>make</p>
-<ul>
-<li>根据前一步的选定，将源代码变成可执行的二进制文件</li>
-</ul>
-</li>
-<li><p>make install</p>
-<ul>
-<li>将编译好的二进制文件复制到系统中，并设置应用环境</li>
-</ul>
-</li>
-</ul>
-</li>
+<li>安装本地插件</li>
 </ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cnpm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure>
+
 <ol start="2">
-<li>安装samba套件,设置共享文件夹</li>
+<li>修改_configure.yml文件  </li>
 </ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#安装 samba 和 samba-client</span></span></span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#添加samba用户（需要是系统用户）,设置登陆密码</span></span></span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#启动</span></span></span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#设置共享文件夹，给与权限</span></span></span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Deployment</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># Docs: https://hexo.io/docs/deployment.html</span></span></span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/wildCoooooder/wildCoooooder.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>部署  </li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br><span class="line"><span class="meta">#</span><span class="bash">输入Github 账户密码</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<hr>
+<h2 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h2><p>选用yilia主题    <a href="https://github.com/litten/hexo-theme-yilia" target="_blank" rel="noopener">GitHub地址</a></p>
+<ul>
+<li><p>克隆到本地 themes文件夹下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/litten/hexo-theme-yilia.git &lt;THEMES_PATH&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改_configure.yml文件，themes更改为主题名称</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: yilia</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重新clean、生成、部署</p>
+</li>
+</ul>
+
       
 
       
@@ -931,7 +952,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/blog/2019/07/26/samba网络服务器/">展开全文 >></a>
+          <a class="article-more-a" href="/blog/2019/07/26/搭建hexo博客/">展开全文 >></a>
         </p>
       
 
@@ -1124,19 +1145,19 @@
 
 
   
-    <article id="post-搭建hexo博客" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-趣谈网络协议" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/blog/2019/07/26/搭建hexo博客/">搭建Hexo博客</a>
+      <a class="article-title" href="/blog/2019/07/26/趣谈网络协议/">浅记--趣谈网络协议		长期更新....</a>
     </h1>
   
 
         
-        <a href="/blog/2019/07/26/搭建hexo博客/" class="archive-article-date">
+        <a href="/blog/2019/07/26/趣谈网络协议/" class="archive-article-date">
   	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
 </a>
         
@@ -1144,70 +1165,49 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>​        Node.js    Git    Hexo</p>
-<hr>
-<h3 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h3><ul>
-<li><p>更换下载源为taobao（使用cnpm）</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h3 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h3><ul>
-<li><p>设置本地Git账户</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name "&lt;github用户名&gt;"</span><br><span class="line">git config --global user.email "&lt;github邮箱地址&gt;"</span><br></pre></td></tr></table></figure>
-
-
-</li>
-</ul>
+        <h2 id="Why-Networking-Protocol？"><a href="#Why-Networking-Protocol？" class="headerlink" title="Why Networking Protocol？"></a>Why Networking Protocol？</h2><h4 id="协议三要素"><a href="#协议三要素" class="headerlink" title="协议三要素"></a>协议三要素</h4><blockquote>
 <ul>
-<li><p>设置将来的免密部署</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">配置SSH</span></span><br><span class="line">ssh-keygen -t rsa -C "&lt;github邮箱地址&gt;"</span><br><span class="line"><span class="meta">#</span><span class="bash">复制SSH密匙到GitHub的SSH设置中</span></span><br><span class="line">/home/&lt;USER&gt;/.ssh/id_rsa.pub</span><br><span class="line"><span class="meta">#</span><span class="bash">生成配置文件，保存密码</span></span><br><span class="line">touch .git-credentials</span><br><span class="line">vim .git-credentials</span><br><span class="line">	输入：https://&lt;username&gt;:&lt;password&gt;@github.com</span><br><span class="line"><span class="meta">#</span><span class="bash"> 保存</span></span><br><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
-
-</li>
+<li>语法</li>
+<li>语义</li>
+<li>顺序</li>
 </ul>
-<h3 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h3><ul>
-<li><p>利用cnpm准备</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">安装</span></span><br><span class="line">cnpm install -g hexo-cli</span><br><span class="line"><span class="meta">#</span><span class="bash">检查</span></span><br><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
-
-
-</li>
-</ul>
+</blockquote>
+<h4 id="简例说明常用网络协议："><a href="#简例说明常用网络协议：" class="headerlink" title="简例说明常用网络协议："></a>简例说明常用网络协议：</h4><p>以网络购物为例：</p>
 <ul>
-<li><p>创建文件夹，生成博客</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">生成, 自动克隆到指定位置</span></span><br><span class="line">sudo init </span><br><span class="line"><span class="meta">#</span><span class="bash">创建 new</span></span><br><span class="line">hexo n "&lt;文章名称&gt;"</span><br><span class="line"><span class="meta">#</span><span class="bash">生成博客 generate</span></span><br><span class="line">hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash">刷新 clean</span></span><br><span class="line">hexo clean</span><br><span class="line"><span class="meta">#</span><span class="bash">启动 start</span></span><br><span class="line">hexo s</span><br><span class="line"><span class="meta">#</span><span class="bash">部署 deploy</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+<li><p>由URL到IP地址，使用一般的地址协议薄DNS查找，或者更精准的HTTPDNS，使用HTTP协议封装“购物需求”内容。称之为，应用层。</p>
+</li>
+<li><p>下一层为传输层，（TCP、UDP两种）内含浏览器监听端口和服务器监听端口。</p>
+</li>
+<li><p>下一层为网络层，IP协议。内含本机IP地址、目标IP地址。</p>
+</li>
+<li><p>下一层为MAC层，网关收到包再根据路由表判断目标IP的行走路径。由操作系统到网关是依据ARP协议：</p>
+<blockquote>
+<p>（ARP协议）</p>
+<p>操作系统在本地广播寻找网关</p>
+<p>网关收到广播会回复自己的MAC地址</p>
+<p>操作系统再根据MAC地址找到网关，把数据包发送给网关。</p>
+<p>路由协议中常用的也有OSPF、BGP</p>
+</blockquote>
+</li>
+<li><p>最后一个网关收到数据包后，对局域内进行广播。根据MAC地址找到目标IP机器。</p>
+<blockquote>
+<p>局域内广播</p>
+<p>目标IP机器回复MAC地址</p>
+<p>网关根据MAC地址找到目标服务器</p>
+</blockquote>
+</li>
+<li><p>目标服务器收到包后，依次取下MAC头、IP头，接着遇到封装的TCP协议。</p>
+</li>
+<li><p>将其转交给传输层，即TCP层。该层收到包后会有一个回应。同时，根据目标端口号找到对应的端口。</p>
+<blockquote>
+<p>如果目标端口号被电商网站的进程监听，如Tomcat，收到包内的信息后就进行后续的操作。</p>
+<p>如果告诉的是相关的进程，往往通过RPC调用，即远程调用的方式来实现，由远程框架统一处理。</p>
+</blockquote>
 </li>
 </ul>
-<ul>
-<li><p>部署到Github</p>
-<ol>
-<li>安装本地插件</li>
-</ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cnpm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>修改_configure.yml文件  </li>
-</ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Deployment</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># Docs: https://hexo.io/docs/deployment.html</span></span></span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/wildCoooooder/wildCoooooder.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li>部署  </li>
-</ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br><span class="line"><span class="meta">#</span><span class="bash">输入Github 账户密码</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<hr>
-<h2 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h2><p>选用yilia主题    <a href="https://github.com/litten/hexo-theme-yilia" target="_blank" rel="noopener">GitHub地址</a></p>
-<ul>
-<li><p>克隆到本地 themes文件夹下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/litten/hexo-theme-yilia.git &lt;THEMES_PATH&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>修改_configure.yml文件，themes更改为主题名称</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: yilia</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>重新clean、生成、部署</p>
-</li>
-</ul>
+<p><img src="../images/TCP.png" alt="TCP头"></p>
+<p><img src="../images/IP.png" alt="IP头"> </p>
+<p><img src="../images/MAC.png" alt="MAC头"></p>
 
       
 
@@ -1220,7 +1220,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/blog/2019/07/26/搭建hexo博客/">展开全文 >></a>
+          <a class="article-more-a" href="/blog/2019/07/26/趣谈网络协议/">展开全文 >></a>
         </p>
       
 

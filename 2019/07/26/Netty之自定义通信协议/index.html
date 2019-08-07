@@ -5,22 +5,22 @@
   
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="dns-prefetch" href="http://wildecu.gitee.io/blog">
+  <link rel="dns-prefetch" href="https://wildecu.gitee.io/blog">
   <title>Netty之通讯协议设计 | BoardMan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="通讯协议的定义与设计无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。 一种数据包的设计：   魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。 版本号，一般留作版本升级使用。多数用不到。 序列化算法，标明自身使用的序列化方式。需">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Netty之通讯协议设计">
-<meta property="og:url" content="http://wildecu.gitee.io/blog/2019/07/26/Netty之自定义通信协议/index.html">
+<meta property="og:url" content="https://wildecu.gitee.io/blog/2019/07/26/Netty之自定义通信协议/index.html">
 <meta property="og:site_name" content="BoardMan">
 <meta property="og:description" content="通讯协议的定义与设计无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。 一种数据包的设计：   魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。 版本号，一般留作版本升级使用。多数用不到。 序列化算法，标明自身使用的序列化方式。需">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://wildecu.gitee.io/blog/2019/07/26/images/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png">
+<meta property="og:image" content="https://wildecu.gitee.io/blog/2019/07/26/images/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png">
 <meta property="og:updated_time" content="2019-07-26T02:42:21.716Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Netty之通讯协议设计">
 <meta name="twitter:description" content="通讯协议的定义与设计无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。 一种数据包的设计：   魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。 版本号，一般留作版本升级使用。多数用不到。 序列化算法，标明自身使用的序列化方式。需">
-<meta name="twitter:image" content="http://wildecu.gitee.io/blog/2019/07/26/images/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png">
+<meta name="twitter:image" content="https://wildecu.gitee.io/blog/2019/07/26/images/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png">
   
     <link rel="alternative" href="/atom.xml" title="BoardMan" type="application/atom+xml">
   
@@ -299,7 +299,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://wildecu.gitee.io/blog/2019/07/26/Netty之自定义通信协议/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://wildecu.gitee.io/blog/2019/07/26/Netty之自定义通信协议/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -323,8 +323,8 @@
     </a>
   
   
-    <a href="/blog/2019/07/26/samba网络服务器/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">samba 网络服务器共享Linux、Windows文件</div>
+    <a href="/blog/2019/07/26/搭建hexo博客/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">搭建Hexo博客</div>
       <i class="icon-circle-right"></i>
     </a>
   
