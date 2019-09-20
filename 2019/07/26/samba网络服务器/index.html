@@ -196,7 +196,7 @@
 <ol start="2">
 <li>安装samba套件,设置共享文件夹</li>
 </ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#安装 samba 和 samba-client</span></span></span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#添加samba用户（需要是系统用户）,设置登陆密码</span></span></span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#启动</span></span></span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#设置共享文件夹，给与权限</span></span></span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>#安装 samba 和 samba-client</span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#添加samba用户（需要是系统用户）,设置登陆密码</span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#启动</span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#设置共享文件夹，给与权限</span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -268,18 +268,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/07/26/Netty之自定义通信协议/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/07/26/Netty之通信案例/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Netty之通讯协议设计
+          Netty案例
         
       </div>
     </a>
   
   
-    <a href="/2019/07/26/ubuntu18.04 安装MySQL/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Ubuntu18.04 安装MySQL与默认编码设置</div>
+    <a href="/2019/07/26/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hello World</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -484,7 +484,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     	<section class="tools-section tools-section-me" q-show="aboutme">
   	  	
-  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  		<div class="aboutme-wrap" id="js-aboutme">BoardMan&lt;br&gt;&lt;br&gt;快船总冠军！！！&lt;br&gt;谢谢大家</div>
   	  	
     	</section>
     

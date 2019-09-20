@@ -6,21 +6,25 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Netty之通讯协议设计 | BoardMan</title>
+  <title>从零搭建Hadoop集群环境 | BoardMan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="通讯协议的定义与设计无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。 一种数据包的设计：   魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。 版本号，一般留作版本升级使用。多数用不到。 序列化算法，标明自身使用的序列化方式。需">
+  <meta name="description" content="​    工欲善其事必先利其器，学习Hadoop开发的前提绕不开基础环境的搭建，限于设备有限，买不起多台云主机，在阿里云单机上跑完伪节点下的Wordcount案例后，还是决定动手搭建一个本地集群，方便后期学习。 开发环境：  Windows10 Vmware15 centos7 Hadoop2.7.7 JDK1.8   ​    第一步准备三台虚拟机，在Vmware上新建三台虚拟机并不难，这里有一">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Netty之通讯协议设计">
-<meta property="og:url" content="http://yoursite.com/2019/07/26/Netty之自定义通信协议/index.html">
+<meta property="og:title" content="从零搭建Hadoop集群环境">
+<meta property="og:url" content="http://yoursite.com/2019/09/16/从零搭建Hadoop集群环境/index.html">
 <meta property="og:site_name" content="BoardMan">
-<meta property="og:description" content="通讯协议的定义与设计无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。 一种数据包的设计：   魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。 版本号，一般留作版本升级使用。多数用不到。 序列化算法，标明自身使用的序列化方式。需">
+<meta property="og:description" content="​    工欲善其事必先利其器，学习Hadoop开发的前提绕不开基础环境的搭建，限于设备有限，买不起多台云主机，在阿里云单机上跑完伪节点下的Wordcount案例后，还是决定动手搭建一个本地集群，方便后期学习。 开发环境：  Windows10 Vmware15 centos7 Hadoop2.7.7 JDK1.8   ​    第一步准备三台虚拟机，在Vmware上新建三台虚拟机并不难，这里有一">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/2019/07/26/images/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png">
-<meta property="og:updated_time" content="2019-07-26T02:42:21.716Z">
+<meta property="og:image" content="http://yoursite.com/2019/09/16/images/WindowsServer.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/16/images/Vmware_NAT1.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/16/images/Vmware_NAT2.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/16/images/Vmware_NAT3.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/16/images/Vmnet8.png">
+<meta property="og:updated_time" content="2019-09-16T08:10:52.852Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Netty之通讯协议设计">
-<meta name="twitter:description" content="通讯协议的定义与设计无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。 一种数据包的设计：   魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。 版本号，一般留作版本升级使用。多数用不到。 序列化算法，标明自身使用的序列化方式。需">
-<meta name="twitter:image" content="http://yoursite.com/2019/07/26/images/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png">
+<meta name="twitter:title" content="从零搭建Hadoop集群环境">
+<meta name="twitter:description" content="​    工欲善其事必先利其器，学习Hadoop开发的前提绕不开基础环境的搭建，限于设备有限，买不起多台云主机，在阿里云单机上跑完伪节点下的Wordcount案例后，还是决定动手搭建一个本地集群，方便后期学习。 开发环境：  Windows10 Vmware15 centos7 Hadoop2.7.7 JDK1.8   ​    第一步准备三台虚拟机，在Vmware上新建三台虚拟机并不难，这里有一">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/16/images/WindowsServer.png">
   
     <link rel="alternative" href="/atom.xml" title="BoardMan" type="application/atom+xml">
   
@@ -152,96 +156,95 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Netty之自定义通信协议" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-从零搭建Hadoop集群环境" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Netty之通讯协议设计
+      从零搭建Hadoop集群环境
     </h1>
   
 
         
-        <a href="/2019/07/26/Netty之自定义通信协议/" class="archive-article-date">
-  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
+        <a href="/2019/09/16/从零搭建Hadoop集群环境/" class="archive-article-date">
+  	<time datetime="2019-09-16T08:10:52.852Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-16</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="通讯协议的定义与设计"><a href="#通讯协议的定义与设计" class="headerlink" title="通讯协议的定义与设计"></a>通讯协议的定义与设计</h2><p>无论是使用 Netty 还是原始的 Socket 编程，基于 TCP 通信的数据包格式均为二进制，协议指的就是客户端与服务端事先商量好的，每一个二进制数据包中每一段字节分别代表什么含义的规则。</p>
-<p>一种数据包的设计：</p>
-<p><img src="../images/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png" alt="数据包的设计"></p>
-<ol>
-<li>魔数，固定字节形式。标明自身通讯协议，服务器根据该数来判断是否接收当前数据。</li>
-<li>版本号，一般留作版本升级使用。多数用不到。</li>
-<li>序列化算法，标明自身使用的序列化方式。需要服务端与客户端协同标明。</li>
-<li>指令，二进制下，一个字节占八位，可以代表255个指令。</li>
-<li>数据长度，固定字节格式。这里只说明后续数据部分的长度。</li>
-<li>数据，通讯包中的数据内容。如，登录时的用户信息..</li>
+        <p>​    工欲善其事必先利其器，学习Hadoop开发的前提绕不开基础环境的搭建，限于设备有限，买不起多台云主机，在阿里云单机上跑完伪节点下的Wordcount案例后，还是决定动手搭建一个本地集群，方便后期学习。</p>
+<h2 id="开发环境："><a href="#开发环境：" class="headerlink" title="开发环境："></a>开发环境：</h2><blockquote>
+<ul>
+<li>Windows10 Vmware15</li>
+<li>centos7</li>
+<li>Hadoop2.7.7</li>
+<li>JDK1.8</li>
+</ul>
+</blockquote>
+<p>​    第一步准备三台虚拟机，在Vmware上新建三台虚拟机并不难，这里有一点需要注意的是三台虚拟机之间的网络配置的选择。在之前搭建storm开发环境的时候选用的是桥接模式，但是有个弊端在于每次宿主机的IP出现变动之后，所有虚拟机都不能ping通外部网络。这次选用NAT网络模式（网络地址转换），有个最大的优点：</p>
+<blockquote>
+<ul>
+<li>虚拟机的IP只需要配置NAT网段中的IP，访问外部host可以通过宿主机IP访问。它不需要有外部网络独立的IP（即物理交换机网段中的IP） </li>
+</ul>
+</blockquote>
+<h2 id="虚拟机NAT网络模式配置："><a href="#虚拟机NAT网络模式配置：" class="headerlink" title="虚拟机NAT网络模式配置："></a>虚拟机NAT网络模式配置：</h2><ol>
+<li><h3 id="关闭Windows防火墙"><a href="#关闭Windows防火墙" class="headerlink" title="关闭Windows防火墙"></a>关闭Windows防火墙</h3></li>
+<li><h3 id="确认Windows中NAT、DHCP服务是否开启"><a href="#确认Windows中NAT、DHCP服务是否开启" class="headerlink" title="确认Windows中NAT、DHCP服务是否开启"></a>确认Windows中NAT、DHCP服务是否开启</h3><p><img src="../images/WindowsServer.png" alt="Windows系统服务设置"></p>
+</li>
+<li><h3 id="关闭虚拟机防火墙"><a href="#关闭虚拟机防火墙" class="headerlink" title="关闭虚拟机防火墙"></a>关闭虚拟机防火墙</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看防火墙状态</span></span><br><span class="line">firewall-cmd --state</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 停止防火墙</span></span><br><span class="line">systemctl stop firewalld.service</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 禁止开机自启动</span></span><br><span class="line">systemctl disable firewalld.service</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
 </ol>
-<h2 id="通讯过程中的Java对象"><a href="#通讯过程中的Java对象" class="headerlink" title="通讯过程中的Java对象"></a>通讯过程中的Java对象</h2><p>定义抽象类：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Packet</span> </span>&#123;</span><br><span class="line">	<span class="comment">//协议版本</span></span><br><span class="line">    <span class="meta">@JSONField</span>(deserialize = <span class="keyword">false</span>, serialize = <span class="keyword">false</span>)</span><br><span class="line">    <span class="keyword">private</span> Byte version = <span class="number">1</span>;</span><br><span class="line">	<span class="comment">//指令</span></span><br><span class="line">    <span class="meta">@JSONField</span>(serialize = <span class="keyword">false</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Byte <span class="title">getCommand</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li><h3 id="查看Windows主机IP信息，记录IP地址、子网掩码、DNS服务器配置"><a href="#查看Windows主机IP信息，记录IP地址、子网掩码、DNS服务器配置" class="headerlink" title="查看Windows主机IP信息，记录IP地址、子网掩码、DNS服务器配置"></a>查看Windows主机IP信息，记录IP地址、子网掩码、DNS服务器配置</h3><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipconfig -all</span><br></pre></td></tr></table></figure>
+</li>
+<li><h3 id="Windows开启以太网的网络共享"><a href="#Windows开启以太网的网络共享" class="headerlink" title="Windows开启以太网的网络共享"></a>Windows开启以太网的网络共享</h3><p>这样VMnet8虚拟网卡可以使用宿主机IP访问外部网络</p>
+<p>![Windows开启物理网卡的网络共享](../images/Windows开启 网络共享.png)</p>
+</li>
+<li><h3 id="设置VMware中NAT模式的默认配置-图是用别人的"><a href="#设置VMware中NAT模式的默认配置-图是用别人的" class="headerlink" title="设置VMware中NAT模式的默认配置(图是用别人的)"></a>设置VMware中NAT模式的默认配置(图是用别人的)</h3><p><img src="../images/Vmware_NAT1.png" alt="NAT默认配置1"></p>
+<p><img src="../images/Vmware_NAT2.png" alt="NAT默认配置2"></p>
+<p><img src="../images/Vmware_NAT3.png" alt="NAT默认配置3"></p>
+</li>
+<li><h3 id="配置Vmnet8网卡信息：IP地址网段、子网掩码"><a href="#配置Vmnet8网卡信息：IP地址网段、子网掩码" class="headerlink" title="配置Vmnet8网卡信息：IP地址网段、子网掩码"></a>配置Vmnet8网卡信息：IP地址网段、子网掩码</h3><p><img src="../images/Vmnet8.png" alt="配置Vmnet8网卡信息"></p>
+</li>
+<li><h3 id="配置虚拟机静态IP"><a href="#配置虚拟机静态IP" class="headerlink" title="配置虚拟机静态IP"></a>配置虚拟机静态IP</h3><p>在root权限下修改系统配置，改成静态IP，(也可以通过鼠标操作进行修改</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 修改  /etc/sysconfig/network-scripts/ifcfg-eth0 文件</span></span><br><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-eth0</span><br></pre></td></tr></table></figure>
+</li>
+<li><h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>ping 外部网络是否通顺，如果成功则开始准备下一步的环境搭建</p>
+</li>
+</ol>
+<h2 id="开发环境：-1"><a href="#开发环境：-1" class="headerlink" title="开发环境："></a>开发环境：</h2><p>​     网络的问题解决之后，对集群的搭建来说已经成功一大半了(对我来说…)！一个Hadoop的集群，运行环境还少不了两个必备条件：JDK、SSH。当然了这里肯定也少不了Hadoop本身…</p>
+<ol>
+<li><h3 id="安装JDK、Hadoop并配置环境变量"><a href="#安装JDK、Hadoop并配置环境变量" class="headerlink" title="安装JDK、Hadoop并配置环境变量"></a>安装JDK、Hadoop并配置环境变量</h3><p>​    这里我把JDK与Hadoop都放在/opt下。VMware tool 可以通过文件拖拽实现传输，但经常出现文件传输不完整的情况，尤其对于这种大文件来说，更加不靠谱，所以我选择使用Filezilla工具，通过FTP协议传输到配置好的主机上</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 解压</span></span><br><span class="line">tar -zxvf JDK.tar.gz</span><br><span class="line">tar -zxvf HADOOP.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置环境变量</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 对于root用户来说，配置/etc/profile</span></span><br><span class="line"><span class="meta">#</span><span class="bash">对于普通用户来说，配置~/.bashrc</span></span><br><span class="line">export JAVA_HOME=你的安装目录</span><br><span class="line">export PATH=$PATH:$JAVA_HOME/bin</span><br><span class="line"></span><br><span class="line">export HADOOP_HOME=你的安装目录</span><br><span class="line">export PATH=$PATH:$HADOOP_HOME/bin</span><br><span class="line">export PATH=$PATH:$HADOOP_HOME/sbin</span><br></pre></td></tr></table></figure>
 
-<blockquote>
-<ul>
-<li>定义通讯过程中Java对象的抽象类，所有的指令数据包都必须实现这里面的方法getCommand()</li>
-<li>所有的request/response包都继承该类</li>
+
+
+</li>
+</ol>
+<ol start="2">
+<li><h3 id="克隆虚拟机，并注意Mac地址是否冲突更换，并修改hostname（这里搭建了三台"><a href="#克隆虚拟机，并注意Mac地址是否冲突更换，并修改hostname（这里搭建了三台" class="headerlink" title="克隆虚拟机，并注意Mac地址是否冲突更换，并修改hostname（这里搭建了三台"></a>克隆虚拟机，并注意Mac地址是否冲突更换，并修改hostname（这里搭建了三台</h3><ul>
+<li><p>在VMware中直接克隆三台出来</p>
+</li>
+<li><p>配置静态IP、hostname、删除网络配置文件中的uuid</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 静态IP、删除uuid</span></span><br><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-eth0</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改hostname，为了方便，设置IP地址与hostname能够对应</span></span><br><span class="line">vi /etc/hosts</span><br><span class="line"></span><br><span class="line">hadoop131 ***.***.***.131</span><br><span class="line">...132 ...132</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
-</blockquote>
-<p>定义指令接口：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Command</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    Byte LOGIN_REQUEST = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    Byte LOGIN_RESPONSE = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h3 id="配置集群中SSH免密码登陆"><a href="#配置集群中SSH免密码登陆" class="headerlink" title="配置集群中SSH免密码登陆"></a>配置集群中SSH免密码登陆</h3><p> ​    配置ssh免密登陆是非常重要的一步，这里捎带一下ssh免密连接的原理：以A、B两台机器为例，A想通过ssh登陆B。在A的本地需要生成公钥、秘钥两个密钥对，在第一次登陆B的时候，A会将公钥拷贝到服务器B并生成授权key（Authorized_keys），接着A再通过SSH访问B，数据通过私钥加密，服务器B接收到数据后，根据授权key中A公钥解密数据，服务器B与A通讯的时候，是通过A的公钥加密，A接收到数据后，根据自己的私钥解密数据。</p>
+<p> ​    </p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 生成密钥对，会生成两个文件id_rsa（私钥）、id_rsa.pub（公钥）</span></span><br><span class="line">ssh-keygen -t rsa			# 按照默认值设置，数据三次回车</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 将公钥拷贝到要免密登录的目标机器上，自己也要拷贝一份</span></span><br><span class="line">ssh-copy-id 192.168.1.13*</span><br></pre></td></tr></table></figure>
 
-<blockquote>
-<ul>
-<li>定义request/reponse指令</li>
-</ul>
-</blockquote>
-<p>定义请求Java对象：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> protocol.command.Command.LOGIN_REQUEST;</span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginRequestPacket</span> <span class="keyword">extends</span> <span class="title">Packet</span> </span>&#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * 定义数据内容</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="keyword">private</span> String userId;</span><br><span class="line">    <span class="keyword">private</span> String content;</span><br><span class="line">    <span class="keyword">private</span> String location;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Byte <span class="title">getCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> LOGIN_REQUEST;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> ​    由于有三台虚拟机，如果每台都这样单独配置一遍的话是非常麻烦的，如果root用户和普通用户都想配置一份的话，那更麻烦了，所以，这里我用了xshell工具，一次向多个主机发送相同的命令，可以保住很多头发。</p>
+</li>
+</ol>
 
-<h2 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h2><p>定义序列化接口：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Serializer</span> </span>&#123;</span><br><span class="line">	<span class="comment">//定义默认序列化算法</span></span><br><span class="line">    Serializer DEFAULT = <span class="keyword">new</span> JSONSerializer();</span><br><span class="line"></span><br><span class="line"> 	<span class="comment">//获取序列化算法</span></span><br><span class="line">    <span class="function"><span class="keyword">byte</span> <span class="title">getSerializerAlgorithm</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//Java对象转化为字节数组</span></span><br><span class="line">    <span class="keyword">byte</span>[] serialize(Object object);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//二进制数组转换为Java对象</span></span><br><span class="line">    &lt;T&gt; <span class="function">T <span class="title">deserialize</span><span class="params">(Class&lt;T&gt; clazz, <span class="keyword">byte</span>[] bytes)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ul>
-<li>序列化中定义三个方法，获取序列化算法标识，以选择后续序列化方式。然后进行相应的序列化与反序列化。这里选用fastjson作为序列化框架</li>
-<li>序列化serialize() 将Java对象转换为字节数组，反序列deserialize() 将字节数组转换为某种类型的Java对象</li>
-</ul>
-</blockquote>
-<p>实现序列化接口：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JSONSerializer</span> <span class="keyword">implements</span> <span class="title">Serializer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">byte</span> <span class="title">getSerializerAlgorithm</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SerializeAlgorithm.JSON;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">byte</span>[] serialize(Object object) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> JSON.toJSONBytes(object);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">deserialize</span><span class="params">(Class&lt;T&gt; clazz, <span class="keyword">byte</span>[] bytes)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> JSON.parseObject(bytes, clazz);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>定义序列化算法的类型：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">SerializeAlgorithm</span> </span>&#123;</span><br><span class="line">	<span class="comment">//JSON序列化标识</span></span><br><span class="line">    <span class="keyword">byte</span> JSON = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//定义默认序列化算法</span></span><br><span class="line">    Serializer DEFAULT = <span class="keyword">new</span> JSONSerializer();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ul>
-<li>把JSON设为默认序列化算法</li>
-<li>如果想使用其他的序列化算法，则定义其他的接口，并继承接口Serializer，再定义序列化标识，再覆盖两个方法即可。</li>
-</ul>
-</blockquote>
-<h2 id="编码：封装成二进制的过程"><a href="#编码：封装成二进制的过程" class="headerlink" title="编码：封装成二进制的过程"></a>编码：封装成二进制的过程</h2><blockquote>
-<p>PacketCodeC.java</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAGIC_NUMBER = <span class="number">0x12345678</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> ByteBuf <span class="title">encode</span><span class="params">(ByteBufAllocator byteBufAllocator, Packet packet)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//1. 创建ByteBuf对象</span></span><br><span class="line">    ByteBuf byteBuf = byteBufAllocator.ioBuffer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2. 序列化Java对象</span></span><br><span class="line">    <span class="keyword">byte</span>[] bytes = Serializer.DEFAULT.serialize(packet);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3. 实际编码过程</span></span><br><span class="line">    byteBuf.writeInt(MAGIC_NUMBER);</span><br><span class="line">    byteBuf.writeByte(packet.getVersion());</span><br><span class="line">    byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());</span><br><span class="line">    byteBuf.writeByte(packet.getCommand());</span><br><span class="line">    byteBuf.writeInt(bytes.length);</span><br><span class="line">    byteBuf.writeBytes(bytes);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> byteBuf;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ul>
-<li>首先创建一个ByteBuf，<code>ioBuffer()</code>方法会返回适配 io 读写相关的内存</li>
-<li>将Java对象序列化为二进制数据包</li>
-<li>按照协议往包内写入数据</li>
-</ul>
-</blockquote>
-<h2 id="解码：将二进制数据包解析为Java对象的过程"><a href="#解码：将二进制数据包解析为Java对象的过程" class="headerlink" title="解码：将二进制数据包解析为Java对象的过程"></a>解码：将二进制数据包解析为Java对象的过程</h2><blockquote>
-<p>PacketCodeC.java</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Packet <span class="title">decode</span><span class="params">(ByteBuf byteBuf)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//1. 跳过魔数</span></span><br><span class="line">    byteBuf.skipBytes(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2. 跳过版本号</span></span><br><span class="line">    byteBuf.skipBytes(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3. 获取序列化算法    readIndex向前移动一位</span></span><br><span class="line">    <span class="keyword">byte</span> serializeAlgorithm = byteBuf.readByte();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4. 获取指令   readIndex向前移动一位</span></span><br><span class="line">    <span class="keyword">byte</span> command = byteBuf.readByte();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//5. 获取有效数据包长度</span></span><br><span class="line">    <span class="keyword">int</span> length = byteBuf.readInt();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * 6. 重新构建一个新的字节包</span></span><br><span class="line"><span class="comment">    *       构建一个字节长度为length的数组</span></span><br><span class="line"><span class="comment">    *       把ByteBuf的剩余数据 写入这个新建的数组中</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[length];</span><br><span class="line">    byteBuf.readBytes(bytes);</span><br><span class="line"></span><br><span class="line">    Class&lt;? extends Packet&gt; requestType = getRequestType(command);</span><br><span class="line">    Serializer serializer = getSerializer(serializeAlgorithm);</span><br><span class="line">    <span class="keyword">if</span> (requestType != <span class="keyword">null</span> &amp;&amp; serializer != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> serializer.deserialize(requestType, bytes);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="附–编解码实现逻辑代码："><a href="#附–编解码实现逻辑代码：" class="headerlink" title="附–编解码实现逻辑代码："></a>附–编解码实现逻辑代码：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PacketCodeC</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAGIC_NUMBER = <span class="number">0x12345678</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> PacketCodeC INSTANCE = <span class="keyword">new</span> PacketCodeC();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;Byte, Class&lt;? extends Packet&gt;&gt; packetTypeMap;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;Byte, Serializer&gt; serializerMap;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">PacketCodeC</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        packetTypeMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        packetTypeMap.put(LOGIN_REQUEST, LoginRequestPacket.class);</span><br><span class="line">        packetTypeMap.put(LOGIN_RESPONSE, LoginResponsePacket.class);</span><br><span class="line"></span><br><span class="line">        serializerMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        Serializer serializer = <span class="keyword">new</span> JSONSerializer();</span><br><span class="line">        serializerMap.put(serializer.getSerializerAlgorithm(), serializer);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ByteBuf <span class="title">encode</span><span class="params">(ByteBufAllocator byteBufAllocator, Packet packet)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//1. 创建ByteBuf对象</span></span><br><span class="line">        ByteBuf byteBuf = byteBufAllocator.ioBuffer();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2. 序列化Java对象</span></span><br><span class="line">        <span class="keyword">byte</span>[] bytes = Serializer.DEFAULT.serialize(packet);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//3. 实际编码过程</span></span><br><span class="line">        byteBuf.writeInt(MAGIC_NUMBER);</span><br><span class="line">        byteBuf.writeByte(packet.getVersion());</span><br><span class="line">        byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());</span><br><span class="line">        byteBuf.writeByte(packet.getCommand());</span><br><span class="line">        byteBuf.writeInt(bytes.length);</span><br><span class="line">        byteBuf.writeBytes(bytes);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> byteBuf;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Packet <span class="title">decode</span><span class="params">(ByteBuf byteBuf)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//1. 跳过魔数</span></span><br><span class="line">        byteBuf.skipBytes(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2. 跳过版本号</span></span><br><span class="line">        byteBuf.skipBytes(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//3. 获取序列化算法    readIndex向前移动一位</span></span><br><span class="line">        <span class="keyword">byte</span> serializeAlgorithm = byteBuf.readByte();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//4. 获取指令   readIndex向前移动一位</span></span><br><span class="line">        <span class="keyword">byte</span> command = byteBuf.readByte();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//5. 获取有效数据包长度</span></span><br><span class="line">        <span class="keyword">int</span> length = byteBuf.readInt();</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * 6. 重新构建一个新的字节包</span></span><br><span class="line"><span class="comment">        *       构建一个字节长度为length的数组</span></span><br><span class="line"><span class="comment">        *       把ByteBuf的剩余数据 写入这个新建的数组中</span></span><br><span class="line"><span class="comment">        * */</span></span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[length];</span><br><span class="line">        byteBuf.readBytes(bytes);</span><br><span class="line"></span><br><span class="line">        Class&lt;? extends Packet&gt; requestType = getRequestType(command);</span><br><span class="line">        Serializer serializer = getSerializer(serializeAlgorithm);</span><br><span class="line">        <span class="keyword">if</span> (requestType != <span class="keyword">null</span> &amp;&amp; serializer != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> serializer.deserialize(requestType, bytes);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Serializer <span class="title">getSerializer</span><span class="params">(<span class="keyword">byte</span> serializeAlgorithm)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> serializerMap.get(serializeAlgorithm);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Class&lt;? extends Packet&gt; getRequestType(<span class="keyword">byte</span> command) &#123;</span><br><span class="line">        <span class="keyword">return</span> packetTypeMap.get(command);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -299,7 +302,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/07/26/Netty之自定义通信协议/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/09/16/从零搭建Hadoop集群环境/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -313,18 +316,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/07/26/Netty简例/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/09/16/Netty属性总计/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Netty之聊天室的“Hello World”
+          Netty之内含属性
         
       </div>
     </a>
   
   
-    <a href="/2019/07/26/samba网络服务器/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">samba 网络服务器共享Linux、Windows文件</div>
+    <a href="/2019/08/07/Netty之ByteBuf介绍/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Netty数据传输载体--ByteBuf</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -529,7 +532,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     	<section class="tools-section tools-section-me" q-show="aboutme">
   	  	
-  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  		<div class="aboutme-wrap" id="js-aboutme">BoardMan&lt;br&gt;&lt;br&gt;快船总冠军！！！&lt;br&gt;谢谢大家</div>
   	  	
     	</section>
     

@@ -6,22 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Netty之内含属性 | BoardMan</title>
+  <title>Netty之聊天室的“Hello World” | BoardMan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="pipeline 与 channelHandler如果对数据包的判断都写在一个类中，通过if else 分类再实现相应的业务逻辑会导致以下问题：   代码臃肿 不利于后期功能拓展   使用pipeline 与 channelHandler  通过责任链设计模式来组织代码逻辑，并且能够支持逻辑的动态添加和删除 Netty中支持各种协议的拓展，如Redis、HTTP、WebSocket  构成：  N">
+  <meta name="description" content="执行逻辑客户端：  首先，客户端会解析控制台指令，比如发送消息或者建立群聊等指令 然后，客户端会基于控制台的输入创建一个指令对象，用户告诉服务端具体要干什么事情 TCP 通信需要的数据格式为二进制，因此，接下来通过自定义二进制协议将指令对象封装成二进制，这一步称为协议的编码 对于收到服务端的数据，首先需要截取出一段完整的二进制数据包（拆包粘包相关的内容后续小节会讲解） 将此二进制数据包解析成指令">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Netty之内含属性">
-<meta property="og:url" content="http://yoursite.com/2019/07/26/Netty属性总计/index.html">
+<meta property="og:title" content="Netty之聊天室的“Hello World”">
+<meta property="og:url" content="http://yoursite.com/2019/09/16/Netty简例/index.html">
 <meta property="og:site_name" content="BoardMan">
-<meta property="og:description" content="pipeline 与 channelHandler如果对数据包的判断都写在一个类中，通过if else 分类再实现相应的业务逻辑会导致以下问题：   代码臃肿 不利于后期功能拓展   使用pipeline 与 channelHandler  通过责任链设计模式来组织代码逻辑，并且能够支持逻辑的动态添加和删除 Netty中支持各种协议的拓展，如Redis、HTTP、WebSocket  构成：  N">
+<meta property="og:description" content="执行逻辑客户端：  首先，客户端会解析控制台指令，比如发送消息或者建立群聊等指令 然后，客户端会基于控制台的输入创建一个指令对象，用户告诉服务端具体要干什么事情 TCP 通信需要的数据格式为二进制，因此，接下来通过自定义二进制协议将指令对象封装成二进制，这一步称为协议的编码 对于收到服务端的数据，首先需要截取出一段完整的二进制数据包（拆包粘包相关的内容后续小节会讲解） 将此二进制数据包解析成指令">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/2019/07/26/images/pipeline%E6%9E%84%E6%88%90.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/26/images/ChannelPipeline%E5%88%86%E7%B1%BB.png">
-<meta property="og:updated_time" content="2019-07-26T02:43:32.196Z">
+<meta property="og:image" content="http://yoursite.com/2019/09/16/images/netty_client.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/16/images/netty_server.png">
+<meta property="og:updated_time" content="2019-09-16T08:28:37.053Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Netty之内含属性">
-<meta name="twitter:description" content="pipeline 与 channelHandler如果对数据包的判断都写在一个类中，通过if else 分类再实现相应的业务逻辑会导致以下问题：   代码臃肿 不利于后期功能拓展   使用pipeline 与 channelHandler  通过责任链设计模式来组织代码逻辑，并且能够支持逻辑的动态添加和删除 Netty中支持各种协议的拓展，如Redis、HTTP、WebSocket  构成：  N">
-<meta name="twitter:image" content="http://yoursite.com/2019/07/26/images/pipeline%E6%9E%84%E6%88%90.png">
+<meta name="twitter:title" content="Netty之聊天室的“Hello World”">
+<meta name="twitter:description" content="执行逻辑客户端：  首先，客户端会解析控制台指令，比如发送消息或者建立群聊等指令 然后，客户端会基于控制台的输入创建一个指令对象，用户告诉服务端具体要干什么事情 TCP 通信需要的数据格式为二进制，因此，接下来通过自定义二进制协议将指令对象封装成二进制，这一步称为协议的编码 对于收到服务端的数据，首先需要截取出一段完整的二进制数据包（拆包粘包相关的内容后续小节会讲解） 将此二进制数据包解析成指令">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/16/images/netty_client.png">
   
     <link rel="alternative" href="/atom.xml" title="BoardMan" type="application/atom+xml">
   
@@ -153,86 +153,91 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Netty属性总计" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Netty简例" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Netty之内含属性
+      Netty之聊天室的“Hello World”
     </h1>
   
 
         
-        <a href="/2019/07/26/Netty属性总计/" class="archive-article-date">
-  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
+        <a href="/2019/09/16/Netty简例/" class="archive-article-date">
+  	<time datetime="2019-09-16T08:28:37.053Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-16</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="pipeline-与-channelHandler"><a href="#pipeline-与-channelHandler" class="headerlink" title="pipeline 与 channelHandler"></a>pipeline 与 channelHandler</h2><p>如果对数据包的判断都写在一个类中，通过if else 分类再实现相应的业务逻辑会导致以下问题：</p>
-<blockquote>
-<ul>
-<li>代码臃肿</li>
-<li>不利于后期功能拓展</li>
-</ul>
-</blockquote>
-<p>使用pipeline 与 channelHandler</p>
-<blockquote>
-<p>通过责任链设计模式来组织代码逻辑，并且能够支持逻辑的动态添加和删除</p>
-<p>Netty中支持各种协议的拓展，如Redis、HTTP、WebSocket</p>
-</blockquote>
-<p>构成：</p>
-<p><img src="../images/pipeline%E6%9E%84%E6%88%90.png" alt="pipeline.png"></p>
-<p>Netty框架中一条链对应一个channel，链中的所有处理逻辑都在ChannelPipeline的对象中（是一个双向链表，与Channel为一对一的关系）</p>
-<p>ChannelPipeline的分类：</p>
-<p><img src="../images/ChannelPipeline%E5%88%86%E7%B1%BB.png" alt="ChannelPipeline"></p>
-<p>ChannelPipeline有两大子接口，ChannelInboundHandler与ChannelOutBoundHandler。。 两大子接口都有默认实现</p>
-<p>ChannelInboundHandlerAdapter与ChanneloutBoundHandlerAdapter</p>
-<blockquote>
-<ul>
-<li>ChannelInboundHandler    处理读数据的逻辑，最重要的方法是channelRead()，顺序执行</li>
-<li>ChannelOutBoundHandler     处理写数据的逻辑，最重要的方法是write()，逆序执行</li>
-</ul>
-</blockquote>
-<h2 id="粘包与拆包"><a href="#粘包与拆包" class="headerlink" title="粘包与拆包"></a>粘包与拆包</h2><p>Netty中虽然使用ByteBuf为单位进行发送，但对于操作系统来说最终还是要通过TCP协议发送数据，按照字节流发送数据。数据到了服务端，以字节流的形式读入，重新拼装成ByteBuf，在这一整个过程中可能会出现顺序不对等的情况。因此，需要在应用层指定协议，客户端根据协议来组装数据包称为粘包，服务端根据协议组装数据包称为拆包。</p>
-<blockquote>
-<p>比如，发送端将3个数据包粘成2个TCP数据包发送到接收端，接收端就需要根据应用协议将2个数据包重新组装为3个数据包。</p>
-</blockquote>
-<h2 id="Netty中自带的拆包器"><a href="#Netty中自带的拆包器" class="headerlink" title="Netty中自带的拆包器"></a>Netty中自带的拆包器</h2><blockquote>
-<ul>
-<li>基于长度域拆包器 LengthFieldBasedFrameDecoder 最常用</li>
-<li>固定长度的拆包器 FixedLengthFrameDecoder</li>
-<li>行拆包器 LineBasedFrameDecoder</li>
-<li>分隔符拆包器 DelimiterBasedFrameDecoder</li>
-</ul>
-</blockquote>
-<h2 id="ChannelHandler的生命周期"><a href="#ChannelHandler的生命周期" class="headerlink" title="ChannelHandler的生命周期"></a>ChannelHandler的生命周期</h2><p>handlerAdded() -&gt; channelRegistered() -&gt; channelActive() -&gt; channelRead() -&gt; channelReadComplete()-&gt;</p>
-<p>channelInactive() -&gt; channelUnregistered() -&gt; handlerRemoved()</p>
-<blockquote>
+        <hr>
+<h3 id="执行逻辑"><a href="#执行逻辑" class="headerlink" title="执行逻辑"></a>执行逻辑</h3><h4 id="客户端："><a href="#客户端：" class="headerlink" title="客户端："></a>客户端：</h4><p><img src="../images/netty_client.png" alt="客户端概述"></p>
 <ol>
-<li><code>handlerAdded()</code> ：当检测到新连接之后回调，表示在当前channel中添加了一个handler处理器<ul>
-<li>可用于一些资源的申请和释放</li>
-</ul>
-</li>
-<li><code>channelRegistered()</code>：表示当前的 channel 的所有的逻辑处理已经和某个 NIO 线程建立了绑定关系， Netty 里面是使用了线程池的方式，只需要从线程池里面去抓一个线程绑定在这个 channel 上即可</li>
-<li><code>channelActive()</code>：当 channel 的所有的业务逻辑链准备完毕（也就是说 channel 的 pipeline 中已经添加完所有的 handler）以及绑定好一个 NIO 线程之后，这条连接算是真正激活了，接下来就会回调到此方法。<ul>
-<li>可用于连接数的统计，每建立一次连接，该方法被调用一次，连接数加一</li>
-</ul>
-</li>
-<li><code>channelRead()</code>：客户端向服务端发来数据，每次都会回调此方法，表示有数据可读。<ul>
-<li>拆包就在这个方法中进行，根据自定义的协议来进行拆包，每次读取到的数据都会累加到一个容器里面，然后判断能否拆除一个完整的数据包，如果够了就往下传递。</li>
-</ul>
-</li>
-<li><code>channelReadComplete()</code>：服务端每次读完一次完整的数据之后，回调该方法，表示数据读取完毕。</li>
-<li><code>channelInactive()</code>: 表面这条连接已经被关闭了，这条连接在 TCP 层面已经不再是 ESTABLISH 状态了</li>
-<li><code>channelUnregistered()</code>: 表明与这条连接对应的 NIO 线程移除掉对这条连接的处理</li>
-<li><code>handlerRemoved()</code>：最后，我们给这条连接上添加的所有的业务逻辑处理器都给移除掉。</li>
+<li>首先，客户端会解析控制台指令，比如发送消息或者建立群聊等指令</li>
+<li>然后，客户端会基于控制台的输入创建一个指令对象，用户告诉服务端具体要干什么事情</li>
+<li>TCP 通信需要的数据格式为二进制，因此，接下来通过自定义二进制协议将指令对象封装成二进制，这一步称为协议的编码</li>
+<li>对于收到服务端的数据，首先需要截取出一段完整的二进制数据包（拆包粘包相关的内容后续小节会讲解）</li>
+<li>将此二进制数据包解析成指令对象，比如收到消息</li>
+<li>将指令对象送到对应的逻辑处理器来处理</li>
 </ol>
+<h4 id="服务端："><a href="#服务端：" class="headerlink" title="服务端："></a>服务端：</h4><p><img src="../images/netty_server.png" alt="服务端概述"></p>
+<hr>
+<h3 id="案例：客户端与服务端双向通信"><a href="#案例：客户端与服务端双向通信" class="headerlink" title="案例：客户端与服务端双向通信"></a>案例：客户端与服务端双向通信</h3><h4 id="客户端发送数据到服务端"><a href="#客户端发送数据到服务端" class="headerlink" title="客户端发送数据到服务端"></a>客户端发送数据到服务端</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstNettyClient</span> </span>&#123;</span><br><span class="line">    <span class="comment">//设定默认连接尝试次数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_RETRY=<span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT=<span class="number">8000</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String HOST=<span class="string">"127.0.0.1"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//1. 设置group</span></span><br><span class="line">        NioEventLoopGroup worker = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2. 创建加载</span></span><br><span class="line">        Bootstrap bootstrap = <span class="keyword">new</span> Bootstrap();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2.1 引用加载</span></span><br><span class="line">        bootstrap</span><br><span class="line">                .group(worker)</span><br><span class="line">            <span class="comment">//2.2 选用IO模型</span></span><br><span class="line">                .channel(NioSocketChannel.class)</span><br><span class="line">            <span class="comment">//2.3 设置属性： 超时时间、TCP心跳、Nagle算法</span></span><br><span class="line">                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,<span class="number">5000</span>)</span><br><span class="line">                .option(ChannelOption.SO_KEEPALIVE,<span class="keyword">true</span>)</span><br><span class="line">                .option(ChannelOption.TCP_NODELAY,<span class="keyword">true</span>)</span><br><span class="line">            <span class="comment">//2.4 添加逻辑处理器</span></span><br><span class="line">                .handler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel socketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">						<span class="comment">//3. 重写连接方法，连接属性</span></span><br><span class="line">                        socketChannel.pipeline().addLast(<span class="keyword">new</span> FirstClientHandler());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">        connect(bootstrap,HOST,MAX_RETRY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(Bootstrap bootstrap, String host, <span class="keyword">int</span> retry)</span> </span>&#123;</span><br><span class="line">        bootstrap.connect(HOST,PORT)</span><br><span class="line">                .addListener(future -&gt; &#123;</span><br><span class="line">                    <span class="keyword">if</span> (future.isSuccess()) &#123;</span><br><span class="line">                        System.out.println(<span class="string">"连接成功"</span>);</span><br><span class="line">                    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="comment">//第几次重连</span></span><br><span class="line">                        <span class="keyword">int</span> order =(MAX_RETRY -retry) + <span class="number">1</span>;</span><br><span class="line">                        <span class="comment">/*</span></span><br><span class="line"><span class="comment">                         * 本次重连的间隔</span></span><br><span class="line"><span class="comment">                         * &lt;&lt; 位运算，每运行一次等价于 order=order*2</span></span><br><span class="line"><span class="comment">                         * */</span></span><br><span class="line">                        <span class="keyword">int</span> delay = <span class="number">1</span> &lt;&lt; order;</span><br><span class="line">                      System.err.println(<span class="keyword">new</span> Date() + <span class="string">": 连接失败，第"</span> + order + <span class="string">"次重连……"</span>);</span><br><span class="line">                        <span class="comment">//设定运行schedule()</span></span><br><span class="line">         bootstrap.config().group().schedule(() -&gt; connect(bootstrap,host,retry-<span class="number">1</span>),delay, TimeUnit.SECONDS);</span><br><span class="line">           &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>initChannel()方法里给客户端添加一个逻辑处理器，该处理器负责向服务端写数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.handler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel socketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                  socketChannel.pipeline().addLast(<span class="keyword">new</span> FirstClientHandler());</span><br><span class="line">              &#125;</span><br><span class="line">         &#125;);</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>socketChannel.pipeline()返回逻辑处理链，采用责任链模式。</li>
+<li>再调用addLast()方法，添加一个逻辑处理器FirstClientHandler()</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1. 继承ChannelInboundHandlerAdapter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstClientHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 建立连接后立马调用 channelActive</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext channelHandlerContext)</span> </span>&#123;</span><br><span class="line">        System.out.println((<span class="keyword">new</span> Date() + <span class="string">"客户端开始写数据..."</span>));</span><br><span class="line">        <span class="comment">//A. 获取数据</span></span><br><span class="line">        ByteBuf byteBuf = getByteBuf(channelHandlerContext);</span><br><span class="line">        <span class="comment">//B. 写入数据</span></span><br><span class="line">        channelHandlerContext.channel().writeAndFlush(byteBuf);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> ByteBuf <span class="title">getByteBuf</span><span class="params">(ChannelHandlerContext channelHandlerContext)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="string">"我是客户端说的话。。。"</span>.getBytes(Charset.forName(<span class="string">"utf-8"</span>));</span><br><span class="line">        ByteBuf byteBuf = channelHandlerContext.alloc().buffer();</span><br><span class="line">        byteBuf.writeBytes(bytes);</span><br><span class="line">        <span class="keyword">return</span> byteBuf;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ByteBuf byteBuf = (ByteBuf) msg;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> Date()+<span class="string">"客户端收到数据====》"</span>+byteBuf.toString(Charset.forName(<span class="string">"utf-8"</span>)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>逻辑处理器继承自ChannelInboundHandlerAdapter() ，覆盖channelActive()方法，该方法会在连接建立完成后调用。</p>
+</li>
+<li><p>客户端连接成功之后，调用channelActive()方法，在该方法内写向服务器发送的数据。</p>
+</li>
+<li><p>向服务器发送数据分两部分：</p>
+<blockquote>
+<ul>
+<li><p>获取一个二进制数据的抽象ByteBuf，由channelHandlerContext.alloc() 获取到一个ByteBuf的内存管理器，该管理器的作用就是分配一个ByteBuf，然后把二进制数据填充到ByteBuf中，得到Netty所需要的数据格式。</p>
+</li>
+<li><p>调用channelHandlerContext.channel().writeAndFlush()把数据写到服务端。</p>
+</li>
+</ul>
 </blockquote>
+</li>
+</ol>
+<h4 id="服务器端读取数据"><a href="#服务器端读取数据" class="headerlink" title="服务器端读取数据"></a>服务器端读取数据</h4><p>服务端的数据处理逻辑是由ServerBootstrap的childHandler()实现的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstNettyServer</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = <span class="number">8000</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        NioEventLoopGroup boss = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">        NioEventLoopGroup worker = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ServerBootstrap serverBootstrap = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">        serverBootstrap</span><br><span class="line">                .group(boss, worker)</span><br><span class="line">                .channel(NioServerSocketChannel.class)</span><br><span class="line">                .option(ChannelOption.SO_BACKLOG, <span class="number">1024</span>)</span><br><span class="line">                .option(ChannelOption.TCP_NODELAY, <span class="keyword">true</span>)</span><br><span class="line">                .childHandler(<span class="keyword">new</span> ChannelInitializer&lt;NioSocketChannel&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">          <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(NioSocketChannel nioSocketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                  nioSocketChannel.pipeline().addLast(<span class="keyword">new</span> FirstServerHandler());</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;);</span><br><span class="line">        bind(serverBootstrap,PORT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(<span class="keyword">final</span> ServerBootstrap serverBootstrap, <span class="keyword">final</span> <span class="keyword">int</span> port)</span> </span>&#123;</span><br><span class="line">        serverBootstrap.bind(port).addListener(future -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (future.isSuccess()) &#123;</span><br><span class="line">                System.out.println(<span class="string">"端口["</span> + port + <span class="string">"]绑定成功!"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">"端口["</span> + port + <span class="string">"]绑定失败!"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>由childHandler()添加处理逻辑，  在initChannel()方法里给服务端添加逻辑，FirstServerHandler()用于读取客户端发来的数据。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.childHandler(new ChannelInitializer&lt;NioSocketChannel&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">          protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception &#123;</span><br><span class="line">                  nioSocketChannel.pipeline().addLast(new FirstServerHandler());</span><br><span class="line">               &#125;</span><br></pre></td></tr></table></figure>
+
+<p>该逻辑与客户端的类似，获取逻辑链，然后添加逻辑处理器</p>
+<blockquote>
+<ul>
+<li>channelRead()方法是由接收到数据后再调用。（注意区别与客户端的channelActive()方法）</li>
+<li>msg参数就是Netty里面数据读写的载体，调用byteBuf.toString()就能拿到发过来的字符串数据。</li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * 收到数据之后在被调用</span></span><br><span class="line"><span class="comment">    * 定义读入和发送</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">//获取二进制数据的抽象ByteBuf</span></span><br><span class="line">        ByteBuf byteBuf = (ByteBuf) msg;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> Date()+<span class="string">":服务器接受到数据：---&gt;"</span>+byteBuf.toString(Charset.forName(<span class="string">"utf-8"</span>)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="服务器给客户端回传数据"><a href="#服务器给客户端回传数据" class="headerlink" title="服务器给客户端回传数据"></a>服务器给客户端回传数据</h4><p>服务器给客户端回传数据与客户端给服务器写数据的逻辑一样,代码如下：</p>
+<blockquote>
+<ul>
+<li>创建一个ByteBuf，然后填充二进制数据</li>
+<li>调用writeAndFlush()方法写出去</li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="comment">//..........收到数据的业务逻辑</span></span><br><span class="line">        <span class="comment">//......</span></span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">		<span class="comment">//给客户端回传数据</span></span><br><span class="line">        ByteBuf out = getByteBuf(ctx);</span><br><span class="line">        ctx.channel().writeAndFlush(out);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> ByteBuf <span class="title">getByteBuf</span><span class="params">(ChannelHandlerContext context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="string">"服务器123456"</span>.getBytes(Charset.forName(<span class="string">"utf-8"</span>));</span><br><span class="line">        ByteBuf buffer = context.alloc().buffer();</span><br><span class="line">        buffer.writeBytes(bytes);</span><br><span class="line">        <span class="keyword">return</span> buffer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
       
 
@@ -291,7 +296,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/07/26/Netty属性总计/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/09/16/Netty简例/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -305,18 +310,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/07/26/Netty之通信案例/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/09/16/Netty之自定义通信协议/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Netty案例
+          Netty之通讯协议设计
         
       </div>
     </a>
   
   
-    <a href="/2019/07/26/Netty简例/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Netty之聊天室的“Hello World”</div>
+    <a href="/2019/09/16/Netty属性总计/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Netty之内含属性</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -521,7 +526,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     	<section class="tools-section tools-section-me" q-show="aboutme">
   	  	
-  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  		<div class="aboutme-wrap" id="js-aboutme">BoardMan&lt;br&gt;&lt;br&gt;快船总冠军！！！&lt;br&gt;谢谢大家</div>
   	  	
     	</section>
     
