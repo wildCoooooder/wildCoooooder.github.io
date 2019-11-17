@@ -151,35 +151,52 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Centos7-从最小化环境安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-scrapy爬虫" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/09/20/Centos7-从最小化环境安装/">Centos7--从最小化配置开发环境</a>
+      <a class="article-title" href="/2019/11/17/scrapy爬虫/">利用scrapy做增量式爬虫</a>
     </h1>
   
 
         
-        <a href="/2019/09/20/Centos7-从最小化环境安装/" class="archive-article-date">
-  	<time datetime="2019-09-20T11:00:34.689Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-20</time>
+        <a href="/2019/11/17/scrapy爬虫/" class="archive-article-date">
+  	<time datetime="2019-11-17T15:30:32.848Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-17</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>​    程序员总是离不开“环境”的困扰，从进入新手村的那一天就开始手动搞各种环境。虽然阿里云学生服务很方便，但是想弄集群真的买不起。正好实验室有台工作站，就寻思着自己在本地搞了。</p>
-<h4 id="安装最小系统、配置静态IP"><a href="#安装最小系统、配置静态IP" class="headerlink" title="安装最小系统、配置静态IP"></a>安装最小系统、配置静态IP</h4><p>​    第一步当然是准备一台可以联网的机器了，这里工具用的是VirtualBOx，镜像是Centos7-x86_64-1810.ISO。安装的时候勾选了基础开发环境选项</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 更改/etc/sysconfig/network-scripts/ 下的网卡配置信息，比如 ifcfg-eth0  这种</span><br><span class="line"><span class="meta">#</span> 更改、添加以下配置信息</span><br><span class="line">BOOTPROTO=static		# 静态IP，区别DHCP</span><br><span class="line">ONBOOT=yes					# 开机自启网卡服务</span><br><span class="line">IPADDR=192.168.1.111	</span><br><span class="line">NETMASK=255.255.255.0</span><br><span class="line">GATEWAY=192.168.1.1</span><br><span class="line">DNS1=8.8.8.8				# DNS域名解析，其实配自己网关一个就行了</span><br><span class="line">DNS2=192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 重启网络服务</span><br><span class="line">systemctl restart network</span><br></pre></td></tr></table></figure>
+        <p>​    开始接触爬虫的时候还是初学Python的那会，用的还是request、bs4、pandas，再后面接触scrapy做个一两个爬虫，觉得还是框架好，可惜都没有记录都忘记了，现在做推荐系统需要爬取一定的文章，所以又把scrapy捡起来。趁着这次机会做一个记录。</p>
+<p>目录如下：</p>
+<blockquote>
+<ul>
+<li>环境</li>
+<li>本地窗口调试命令</li>
+<li>工程目录</li>
+<li>xpath选择器</li>
+<li>一个简单的增量爬虫示例</li>
+<li>配置介绍</li>
+</ul>
+</blockquote>
+<h4 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h4><p>​    安装scrapy肯定用anaconda（再次强调anaconda的优越性</p>
+<h4 id="本地窗口调试与运行"><a href="#本地窗口调试与运行" class="headerlink" title="本地窗口调试与运行"></a>本地窗口调试与运行</h4><p>​    开发的时候可以利用scrapy自带的调试功能进行模拟请求，这样request、response都会与后面代码保持一样。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 测试请求某网站</span><br><span class="line">scrapy shell URL</span><br><span class="line"><span class="meta">#</span> 设置请求头</span><br><span class="line">scrapy shell -s USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0"  URL</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 指定爬虫内容输出文件格式（json、csv等</span><br><span class="line">scrapy crawl SPIDER_NAME -o FILE_NAME.csv</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 创建爬虫工程</span><br><span class="line">scrapy startproject  articles		# 在当前目录创建一个scrapy工程</span><br></pre></td></tr></table></figure>
 
-<h4 id="开启ssh、添加普通用户"><a href="#开启ssh、添加普通用户" class="headerlink" title="开启ssh、添加普通用户"></a>开启ssh、添加普通用户</h4><p>​    毕竟工作站不在自己座位上，总是坐在别的地方操作也不方便，自己开启ssh，方便后续布置。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 由于安装系统的时候勾选了基础开发环境，所以自带了ssh服务</span><br><span class="line"><span class="meta">#</span>  所以这里只需要更改ssh的配置选项</span><br><span class="line">vim  /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 修改以下配置</span><br><span class="line"><span class="meta">#</span> 打开端口并允许任意IP连接</span><br><span class="line">Port 22</span><br><span class="line"><span class="meta">#</span>AddressFamily any</span><br><span class="line">ListenAddress 0.0.0.0</span><br><span class="line">ListenAddress ::</span><br><span class="line"><span class="meta">#</span> 允许远程连接</span><br><span class="line">PermitRootLogin yes</span><br><span class="line"><span class="meta">#</span> 利用用户密码验证</span><br><span class="line">PasswordAuthentication yes</span><br></pre></td></tr></table></figure>
+<h4 id="新工程结构介绍"><a href="#新工程结构介绍" class="headerlink" title="新工程结构介绍"></a>新工程结构介绍</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> spiders文件下存放所有爬虫，item.py格式化数据输出</span><br><span class="line"><span class="meta">#</span> middlewares.py 设置请求细节（请求头之类的），pipelines.py为数据输出的管道，每一个封装好的item都会经过这里</span><br><span class="line"><span class="meta">#</span> settings.py 对工程进行全局设置（存放配置</span><br><span class="line">├── articles</span><br><span class="line">│   ├── articles</span><br><span class="line">│   │   ├── __init__.py</span><br><span class="line">│   │   ├── items.py</span><br><span class="line">│   │   ├── middlewares.py</span><br><span class="line">│   │   ├── pipelines.py</span><br><span class="line">│   │   ├── settings.py</span><br><span class="line">│   │   └── spiders</span><br><span class="line">│   │       ├── healthy_living.py</span><br><span class="line">│   │       ├── __init__.py</span><br><span class="line">│   │       └── people_health.py</span><br><span class="line">│   └── scrapy.cfg</span><br><span class="line">├── README.en.md</span><br><span class="line">└── README.md</span><br></pre></td></tr></table></figure>
 
-<p>​    学习做开发当然不能拿着root一直任性，所以添加一个普通用户方便后续学习，并且要给新用户sudo的权利</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 添加新用户，alibaba</span><br><span class="line">adduser   alibaba</span><br><span class="line"><span class="meta">#</span>  设置密码</span><br><span class="line">passwd     alibaba</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 给用户sudo权限，修改/etc/sudoers文件</span><br><span class="line"><span class="meta">#</span># Allow root to run any commands anywhere </span><br><span class="line">root    ALL=(ALL)       ALL</span><br><span class="line">alibaba   ALL=(ALL)       ALL		# ALL改为NOPASSWD:ALL可以免密使用</span><br></pre></td></tr></table></figure>
+<h4 id="页面解析神器——Xpath选择器"><a href="#页面解析神器——Xpath选择器" class="headerlink" title="页面解析神器——Xpath选择器"></a>页面解析神器——Xpath选择器</h4><p>​    scrapy自带xpath选择器，很方便，简单介绍一些常用的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全站爬取神器--LinkExtractor，可以自动获取该标签下的所有url跟text（因为网站结构大都一个套路</span></span><br><span class="line"><span class="keyword">from</span> scrapy.linkextractors <span class="keyword">import</span> LinkExtractor</span><br><span class="line">le = LinkExtractor(restrict_xpaths=<span class="string">"//ul[@class='nav2_UL_1 clearFix']"</span>)	<span class="comment"># 返回一个迭代器，通过循环(for i in le)，可获取url(i.url)  (i.text)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取属性class为所有aa的div标签内容中的内容</span></span><br><span class="line">response.xpath(<span class="string">"//div[@class='aa']/text()"</span>).extract()		<span class="comment"># '//'代表获取所有，'/'代表获取第一个，类似的可以找属性为ul的其它标签</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取内容包含“下一页”的所有a标签中包含的链接（提取下一页链接神器</span></span><br><span class="line">response.xpath(<span class="string">"//a[contains(text(),'下一页')]/@href"</span>).extract()</span><br></pre></td></tr></table></figure>
+
+<h4 id="一个简单的增量爬取示例"><a href="#一个简单的增量爬取示例" class="headerlink" title="一个简单的增量爬取示例"></a>一个简单的增量爬取示例</h4><p>​    这里增量爬取的思想很简单：目标网站的数据都是按照时间排列的，所以在对某个连接进行request之前，先查询数据库中有没有这条数据，如果有，就停止爬虫，如果没有发起请求</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HealthyLiving</span><span class="params">(scrapy.Spider)</span>:</span></span><br><span class="line">    <span class="comment"># 一定要一个全局唯一的爬虫名称，命令行启动的时候需要指定该名称</span></span><br><span class="line">    name = <span class="string">"healthy_living"</span></span><br><span class="line">    <span class="comment"># 指定爬虫入口，scrapy支持多入口，所以一定是lis形式</span></span><br><span class="line">    start_urls = [<span class="string">'http://www.jkb.com.cn/healthyLiving/'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    抓取大类标签入口</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></span><br><span class="line">        le = LinkExtractor(restrict_xpaths=<span class="string">"//ul[@class='nav2_UL_1 clearFix']"</span>)</span><br><span class="line">        <span class="keyword">for</span> link <span class="keyword">in</span> le.extract_links(response)[<span class="number">1</span>:<span class="number">-1</span>]:</span><br><span class="line">            tag = link.text</span><br><span class="line">            <span class="comment"># 将这一级提取到的信息，通过请求头传递给下一级（这里是为了给数据打标签</span></span><br><span class="line">            meta = &#123;<span class="string">"tag"</span>: tag&#125;</span><br><span class="line">            <span class="comment"># 依次解析每一个链接，并传递到下一级进行继续爬取</span></span><br><span class="line">            <span class="keyword">yield</span> scrapy.Request(link.url, callback=self.parse_articles, meta=meta)</span><br><span class="line"></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    抓取页面内的文章链接及下一页链接</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse_articles</span><span class="params">(self, response)</span>:</span></span><br><span class="line">        <span class="comment"># 接收上一级传递的信息</span></span><br><span class="line">        meta = response.meta</span><br><span class="line">        article_links = response.xpath(<span class="string">"//div[@class='txt']/h4/a/@href"</span>).extract()</span><br><span class="line">        <span class="keyword">for</span> link <span class="keyword">in</span> article_links:</span><br><span class="line">            res = self.collection.find_one(&#123;<span class="string">"article_url"</span>: link&#125;, &#123;<span class="string">"article_url"</span>: <span class="number">1</span>&#125;)</span><br><span class="line">            full_meta = dict(meta)</span><br><span class="line">            <span class="comment"># 将文章链接传入下一级</span></span><br><span class="line">            full_meta.update(&#123;<span class="string">"article_url"</span>: link&#125;)</span><br><span class="line">            <span class="keyword">if</span> res <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">yield</span> scrapy.Request(link, callback=self.parse_article, meta=full_meta)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">        next_page = response.xpath(<span class="string">"//div[@class='page']//a[contains(text(),'»')]/@href"</span>).extract()[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">if</span> next_page:</span><br><span class="line">            <span class="keyword">yield</span> scrapy.Request(next_page, callback=self.parse_articles, meta=meta)</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 最后解析页面，并输出</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse_article</span><span class="params">(self, response)</span>:</span></span><br><span class="line">     <span class="comment"># 从item.py中导入数据封装格式</span></span><br><span class="line">        article_item = ArticlesItem()</span><br><span class="line">        meta = response.meta</span><br><span class="line">        <span class="comment"># 利用xpath提取页面信息并封装成item</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            article_item[<span class="string">"tag"</span>] = <span class="string">""</span></span><br><span class="line">            <span class="comment">#  ... 省略</span></span><br><span class="line">        <span class="keyword">finally</span>:</span><br><span class="line">            <span class="keyword">yield</span> article_item</span><br></pre></td></tr></table></figure>
+
+<h4 id="工程配置介绍"><a href="#工程配置介绍" class="headerlink" title="工程配置介绍"></a>工程配置介绍</h4><p>​    设置请求头、配置数据库</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置请求头，在middlewares.py中设定，在settings.py中启用</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RandomUA</span><span class="params">(object)</span>:</span></span><br><span class="line">    user_agents = [</span><br><span class="line">            <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit"</span></span><br><span class="line">            <span class="string">"/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"</span>,</span><br><span class="line">            <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"</span>,</span><br><span class="line">            <span class="string">"Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit"</span></span><br><span class="line">            <span class="string">"/534.16 (KHTML, like Gecko) Chrome/10.0.648.133 Safari/534.16"</span></span><br><span class="line">        ]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request, spider)</span>:</span></span><br><span class="line">        request.headers[<span class="string">"User-Agent"</span>] = random.choice(self.user_agents)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置数据入库处理，在pipeline.py进行配置，在settings.py进行启用</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MongoPipeline</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, mongo_uri, mongo_db)</span>:</span></span><br><span class="line">        self.mongo_uri = mongo_uri</span><br><span class="line">        self.mongo_db = mongo_db</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">from_crawler</span><span class="params">(cls, crawler)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> cls(</span><br><span class="line">            mongo_uri=crawler.settings.get(<span class="string">'MONGO_URI'</span>),</span><br><span class="line">            mongo_db=crawler.settings.get(<span class="string">'MONGO_DB'</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">open_spider</span><span class="params">(self, spider)</span>:</span></span><br><span class="line">        print(<span class="string">"开始爬取"</span>, datetime.datetime.now().strftime(<span class="string">'%Y-%m-%d %H:%M:%S'</span>))</span><br><span class="line">        self.client = pymongo.MongoClient(self.mongo_uri)</span><br><span class="line">        self.db = self.client[self.mongo_db]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_item</span><span class="params">(self, item, spider)</span>:</span></span><br><span class="line">        data = self.db[item.collection].find_one(&#123;<span class="string">"title"</span>: item[<span class="string">"title"</span>], <span class="string">"date"</span>: item[<span class="string">"date"</span>]&#125;)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> data <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self.db[item.collection].insert(dict(item))</span><br><span class="line">        <span class="comment"># else:</span></span><br><span class="line">        <span class="comment">#     self.close_spider(self, spider)</span></span><br><span class="line">        <span class="keyword">return</span> item</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close_spider</span><span class="params">(self, spider)</span>:</span></span><br><span class="line">        print(<span class="string">"爬取结束"</span>, datetime.datetime.now().strftime(<span class="string">'%Y-%m-%d %H:%M:%S'</span>))</span><br><span class="line">        self.client.close()</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line"><span class="comment"># 在settings.py启动：请求头的修改，数据库的配置</span></span><br><span class="line">DOWNLOADER_MIDDLEWARES = &#123;</span><br><span class="line">   <span class="comment"># 'articles.middlewares.ArticlesDownloaderMiddleware': 543,</span></span><br><span class="line">   <span class="string">'articles.middlewares.RandomUA'</span>: <span class="number">543</span>,			<span class="comment"># 543代表优先级，数字越低优先级越高</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ITEM_PIPELINES = &#123;</span><br><span class="line">   <span class="string">'articles.pipelines.MongoPipeline'</span>: <span class="number">300</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 一些其它配置</span></span><br><span class="line">ROBOTSTXT_OBEY = <span class="literal">True</span>				<span class="comment"># 是否遵守网站的robot协议</span></span><br><span class="line">FEED_EXPORT_ENCODING = <span class="string">'utf-8'</span>			<span class="comment"># 指定数据输出的编码格式</span></span><br><span class="line"><span class="comment">## 数据库配置</span></span><br><span class="line">MONGO_URI = <span class="string">''</span></span><br><span class="line">MONGO_DB = <span class="string">''</span></span><br><span class="line">MONGO_PORT = <span class="number">27017</span></span><br><span class="line">MONGO_COLLECTION = <span class="string">''</span></span><br></pre></td></tr></table></figure>
 
 
       
@@ -193,7 +210,155 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/09/20/Centos7-从最小化环境安装/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/11/17/scrapy爬虫/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Redis记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/05/Redis记录/">从零记录Redis</a>
+    </h1>
+  
+
+        
+        <a href="/2019/10/05/Redis记录/" class="archive-article-date">
+  	<time datetime="2019-10-05T02:09:47.799Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>环境准备：</p>
+<blockquote>
+<ol>
+<li>官网下载版本（redis5）</li>
+<li>解压、编译、安装</li>
+<li>/usr/local/bin下会自动生成redis-server、redis-cli启动入口</li>
+<li>之后可在任意地方启动redis服务</li>
+</ol>
+</blockquote>
+<p>redis的启动方式</p>
+<blockquote>
+<ol>
+<li>redis-server直接启动，（默认启动</li>
+<li>redis-server指定端口启动 –port 端口号 （指定端口启动</li>
+<li>redis-server  /配置文件路径 （按照指定配置启动</li>
+</ol>
+</blockquote>
+<p>redis的配置说明</p>
+<blockquote>
+<ul>
+<li><p>在redis安装目录下新建config文件夹，存放配置文件</p>
+</li>
+<li><p>根据端口号区分不同redis服务，并以端口号命名不同配置</p>
+</li>
+<li><p>配置文件参数说明</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash">   <span class="comment"># 基础的四个配置</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   port 6382				<span class="comment"># 端口号</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   daemonize yes		<span class="comment"># 开启守护进程，会形成日志文件</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   logfile <span class="string">"6382.log"</span>			<span class="comment"># 日志文件命名</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   dir /home/board-man/DB_data/redis/data			<span class="comment"># redis工作目录设定</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   </span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   <span class="comment"># 持久化参数配置</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   dbfilename dump-<span class="variable">$&#123;port&#125;</span>.rdb			<span class="comment"># 根据端口号区别持久化备份</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   stop-writes-on-bgsave-error yes		<span class="comment"># 如果bgsave发生错误则停止写入</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   rdbcompression yes								<span class="comment"># 开启压缩配置，节省空间与传输资源</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   <span class="comment"># AOF持久化形式</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   auto-aof-rewrite-percentage 100		<span class="comment"># AOF文件增长率</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   auto-aof-rewrite-min-size 64mb		<span class="comment"># 需要重写时的尺寸</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   appendonly yes			<span class="comment"># 打开AOF功能（因为默认是RDb形式持久化</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   appendfilename <span class="string">"appendonly-<span class="variable">$&#123;port&#125;</span>.aof"</span>		<span class="comment"># 根据端口号命名AOF文件</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   appendfsync everysec		<span class="comment"># 每秒保存的策略</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   no-appendfsync-on-rewrite yes		<span class="comment"># AOF重写时，阻塞进程对客户端的请求，防止数据丢失</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   </span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   <span class="comment"># 主从节点配置</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   slaveof ip port		<span class="comment"># zhiding</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   </span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+</blockquote>
+<p>其它功能</p>
+<blockquote>
+<ul>
+<li>慢查询</li>
+<li>pipeline<ul>
+<li>pipeline与M操作的区别在于，M操作具有原子性，而pipeline可能会查分子pipeline，但是返回的结果是一个整体的</li>
+</ul>
+</li>
+<li>…</li>
+</ul>
+</blockquote>
+<p>redis的持久化</p>
+<blockquote>
+<ul>
+<li>RDB<ul>
+<li>缺点：耗时，宕机时可能发生数据丢失</li>
+<li>创建RDB文件（二进制）</li>
+<li>save–同步命令，会替换老文件</li>
+<li>bgsave–异步命令，fork</li>
+<li>自动–配置文件自定生成</li>
+</ul>
+</li>
+<li>AOF<ul>
+<li>记录redis每一条命令</li>
+<li>策略：<ul>
+<li>always，总是写入，开销大</li>
+<li>everysec，每秒写入，可能丢失1s数据</li>
+<li>no，操作系统决定</li>
+</ul>
+</li>
+<li>AOF重写<ul>
+<li>减少磁盘占用、合并条数加快恢复速度</li>
+<li>bgrewriteeaof命令</li>
+<li>配置文件</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>主从复制</p>
+<blockquote>
+<ul>
+<li>slaveof–命令启动<ul>
+<li>slaveof host port    # 指定主节点</li>
+<li>slaveof no one       # 取消</li>
+</ul>
+</li>
+<li>配合启动<ul>
+<li>slaveof host port</li>
+<li>slave-read-only yes  # 从节点设置为只读</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/10/05/Redis记录/">展开全文 >></a>
         </p>
       
 
@@ -230,13 +395,13 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/09/17/Linux记录/">Linux随手记</a>
+      <a class="article-title" href="/2019/10/04/Linux记录/">Linux随手记</a>
     </h1>
   
 
         
-        <a href="/2019/09/17/Linux记录/" class="archive-article-date">
-  	<time datetime="2019-09-17T14:30:48.212Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-17</time>
+        <a href="/2019/10/04/Linux记录/" class="archive-article-date">
+  	<time datetime="2019-10-04T01:38:56.113Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-04</time>
 </a>
         
       </header>
@@ -258,6 +423,14 @@
 <p>比如将用户名hadoop更名为storm</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>分别修改以下文件的所有文件，将所有hadoop换为storm</span><br><span class="line">vim  /etc/passwd</span><br><span class="line">vim /etc/shadow</span><br><span class="line">vim /etc/group</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 更改home下的文件夹名称</span><br><span class="line">mv /home/hadoop  /home/storm</span><br></pre></td></tr></table></figure>
 
+<h4 id="软硬链接"><a href="#软硬链接" class="headerlink" title="软硬链接"></a>软硬链接</h4><p>新建一个链接，指向指定文件位置。两种方式中，任意一方文件发生改变，两者都发生变化</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 只复制路径，不占用空间</span><br><span class="line">ln -s  源目录  新目录</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 将源目录的文件重新复制一份</span><br><span class="line">ln	源目录  新目录</span><br></pre></td></tr></table></figure>
+
+<h4 id="在控制台监听文件内容"><a href="#在控制台监听文件内容" class="headerlink" title="在控制台监听文件内容"></a>在控制台监听文件内容</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> X 代表显示的行数，默认是10行</span><br><span class="line">tail -Xf FILENAME</span><br></pre></td></tr></table></figure>
+
+
+
+<p>​                        </p>
 
       
 
@@ -270,7 +443,79 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/09/17/Linux记录/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/10/04/Linux记录/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Centos7-从最小化环境安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/09/21/Centos7-从最小化环境安装/">Centos7--从最小化系统发开发环境</a>
+    </h1>
+  
+
+        
+        <a href="/2019/09/21/Centos7-从最小化环境安装/" class="archive-article-date">
+  	<time datetime="2019-09-21T01:50:49.007Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>​    程序员总是离不开“环境”的困扰，从进入新手村的那一天就开始手动搞各种环境。虽然阿里云学生服务很方便，但是想弄集群真的买不起。正好实验室有台工作站，就寻思着自己在本地搞了。</p>
+<h4 id="安装最小系统、配置静态IP"><a href="#安装最小系统、配置静态IP" class="headerlink" title="安装最小系统、配置静态IP"></a>安装最小系统、配置静态IP</h4><p>​    第一步当然是准备一台可以联网的机器了，这里工具用的是VirtualBOx，镜像是Centos7-x86_64-1810.ISO。安装的时候勾选了基础开发环境选项</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 更改/etc/sysconfig/network-scripts/ 下的网卡配置信息，比如 ifcfg-eth0  这种</span><br><span class="line"><span class="meta">#</span> 更改、添加以下配置信息</span><br><span class="line">BOOTPROTO=static		# 静态IP，区别DHCP</span><br><span class="line">ONBOOT=yes					# 开机自启网卡服务</span><br><span class="line">IPADDR=192.168.1.111	</span><br><span class="line">NETMASK=255.255.255.0</span><br><span class="line">GATEWAY=192.168.1.1</span><br><span class="line">DNS1=8.8.8.8				# DNS域名解析，其实配自己网关一个就行了</span><br><span class="line">DNS2=192.168.1.1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 重启网络服务</span><br><span class="line">systemctl restart network</span><br></pre></td></tr></table></figure>
+
+<h4 id="开启ssh、添加普通用户"><a href="#开启ssh、添加普通用户" class="headerlink" title="开启ssh、添加普通用户"></a>开启ssh、添加普通用户</h4><p>​    毕竟工作站不在自己座位上，总是坐在别的地方操作也不方便，自己开启ssh，方便后续布置。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 由于安装系统的时候勾选了基础开发环境，所以自带了ssh服务</span><br><span class="line"><span class="meta">#</span>  所以这里只需要更改ssh的配置选项</span><br><span class="line">vim  /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 修改以下配置</span><br><span class="line"><span class="meta">#</span> 打开端口并允许任意IP连接</span><br><span class="line">Port 22</span><br><span class="line"><span class="meta">#</span>AddressFamily any</span><br><span class="line">ListenAddress 0.0.0.0</span><br><span class="line">ListenAddress ::</span><br><span class="line"><span class="meta">#</span> 允许远程连接</span><br><span class="line">PermitRootLogin yes</span><br><span class="line"><span class="meta">#</span> 利用用户密码验证</span><br><span class="line">PasswordAuthentication yes</span><br></pre></td></tr></table></figure>
+
+<p>​    学习做开发当然不能拿着root一直任性，所以添加一个普通用户方便后续学习，并且要给新用户sudo的权利</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 添加新用户，alibaba</span><br><span class="line">adduser   alibaba</span><br><span class="line"><span class="meta">#</span>  设置密码</span><br><span class="line">passwd     alibaba</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 给用户sudo权限，修改/etc/sudoers文件</span><br><span class="line"><span class="meta">#</span># Allow root to run any commands anywhere </span><br><span class="line">root    ALL=(ALL)       ALL</span><br><span class="line">alibaba   ALL=(ALL)       ALL		# ALL改为NOPASSWD:ALL可以免密使用</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/09/21/Centos7-从最小化环境安装/">展开全文 >></a>
         </p>
       
 
@@ -947,19 +1192,19 @@
 
 
   
-    <article id="post-趣谈网络协议" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Netty之通信案例" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/26/趣谈网络协议/">浅记--趣谈网络协议		长期更新....</a>
+      <a class="article-title" href="/2019/07/26/Netty之通信案例/">Netty案例</a>
     </h1>
   
 
         
-        <a href="/2019/07/26/趣谈网络协议/" class="archive-article-date">
+        <a href="/2019/07/26/Netty之通信案例/" class="archive-article-date">
   	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
 </a>
         
@@ -967,129 +1212,43 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Why-Networking-Protocol？"><a href="#Why-Networking-Protocol？" class="headerlink" title="Why Networking Protocol？"></a>Why Networking Protocol？</h2><h4 id="协议三要素"><a href="#协议三要素" class="headerlink" title="协议三要素"></a>协议三要素</h4><blockquote>
+        <h2 id="通讯协议"><a href="#通讯协议" class="headerlink" title="通讯协议"></a>通讯协议</h2><p>延续之前版本</p>
+<h2 id="客户端请求"><a href="#客户端请求" class="headerlink" title="客户端请求"></a>客户端请求</h2><p>连接主体：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_RETRY = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String HOST = <span class="string">"127.0.0.1"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = <span class="number">8001</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        NioEventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line">        Bootstrap bootstrap = <span class="keyword">new</span> Bootstrap();</span><br><span class="line">        bootstrap.group(workerGroup)</span><br><span class="line">                .channel(NioSocketChannel.class)</span><br><span class="line">                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, <span class="number">5000</span>)</span><br><span class="line">                .option(ChannelOption.SO_KEEPALIVE, <span class="keyword">true</span>)</span><br><span class="line">                .option(ChannelOption.TCP_NODELAY, <span class="keyword">true</span>)</span><br><span class="line">                .handler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel socketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                        socketChannel.pipeline().addLast(<span class="keyword">new</span> ClientHandler());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">        connect(bootstrap, MAX_RETRY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(Bootstrap bootstrap, <span class="keyword">int</span> retry)</span> </span>&#123;</span><br><span class="line">        bootstrap.connect(HOST,PORT).addListener(future -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (future.isSuccess()) &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 设备通讯连接成功!"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span> (retry == <span class="number">0</span>)&#123;</span><br><span class="line">                System.err.println(<span class="string">"多次尝试连接失败，放弃连接！"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 第几次重连</span></span><br><span class="line">                <span class="keyword">int</span> order = (MAX_RETRY - retry) + <span class="number">1</span>;</span><br><span class="line">                <span class="comment">// 本次重连的间隔</span></span><br><span class="line">                <span class="keyword">int</span> delay = <span class="number">1</span> &lt;&lt; order;</span><br><span class="line">                System.err.println(<span class="keyword">new</span> Date() + <span class="string">": 连接失败，第"</span> + order + <span class="string">"次重连……"</span>);</span><br><span class="line">                bootstrap.config().group().schedule(() -&gt; connect(bootstrap, retry - <span class="number">1</span>), delay, TimeUnit.SECONDS);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
 <ul>
-<li>语法</li>
-<li>语义</li>
-<li>顺序</li>
+<li>定义连接端口</li>
+<li>定义网络连接属性配置</li>
+<li>.handler(new ChannelInitializer<socketchannel>() {  方法  }); 添加逻辑处理器</socketchannel></li>
 </ul>
 </blockquote>
-<h4 id="简例说明常用网络协议："><a href="#简例说明常用网络协议：" class="headerlink" title="简例说明常用网络协议："></a>简例说明常用网络协议：</h4><p>以网络购物为例：</p>
+<p>逻辑处理器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 设备开始上线..."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建登陆对象</span></span><br><span class="line">        LoginRequestPacket loginRequestPacket = <span class="keyword">new</span> LoginRequestPacket();</span><br><span class="line">        loginRequestPacket.setUserId(UUID.randomUUID().toString());</span><br><span class="line">        loginRequestPacket.setContent(<span class="string">"hello"</span>);</span><br><span class="line">        loginRequestPacket.setLocation(<span class="string">"zust"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//编码</span></span><br><span class="line">        ByteBuf requestByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginRequestPacket);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//写数据</span></span><br><span class="line">        ctx.channel().writeAndFlush(requestByteBuf);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ByteBuf byteBuf = (ByteBuf) msg;</span><br><span class="line">        Packet packet = PacketCodeC.INSTANCE.decode(byteBuf);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (packet <span class="keyword">instanceof</span> LoginResponsePacket) &#123;</span><br><span class="line">            System.out.println(<span class="string">"验证是否为response"</span>);</span><br><span class="line">            <span class="comment">//对response进行处理</span></span><br><span class="line">            LoginResponsePacket loginResponsePacket = (LoginResponsePacket) packet;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (loginResponsePacket.isSuccess()) &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 设备成功上线!"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 上线失败，原因："</span> + loginResponsePacket.getReason());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
 <ul>
-<li><p>由URL到IP地址，使用一般的地址协议薄DNS查找，或者更精准的HTTPDNS，使用HTTP协议封装“购物需求”内容。称之为，应用层。</p>
-</li>
-<li><p>下一层为传输层，（TCP、UDP两种）内含浏览器监听端口和服务器监听端口。</p>
-</li>
-<li><p>下一层为网络层，IP协议。内含本机IP地址、目标IP地址。</p>
-</li>
-<li><p>下一层为MAC层，网关收到包再根据路由表判断目标IP的行走路径。由操作系统到网关是依据ARP协议：</p>
-<blockquote>
-<p>（ARP协议）</p>
-<p>操作系统在本地广播寻找网关</p>
-<p>网关收到广播会回复自己的MAC地址</p>
-<p>操作系统再根据MAC地址找到网关，把数据包发送给网关。</p>
-<p>路由协议中常用的也有OSPF、BGP</p>
-</blockquote>
-</li>
-<li><p>最后一个网关收到数据包后，对局域内进行广播。根据MAC地址找到目标IP机器。</p>
-<blockquote>
-<p>局域内广播</p>
-<p>目标IP机器回复MAC地址</p>
-<p>网关根据MAC地址找到目标服务器</p>
-</blockquote>
-</li>
-<li><p>目标服务器收到包后，依次取下MAC头、IP头，接着遇到封装的TCP协议。</p>
-</li>
-<li><p>将其转交给传输层，即TCP层。该层收到包后会有一个回应。同时，根据目标端口号找到对应的端口。</p>
-<blockquote>
-<p>如果目标端口号被电商网站的进程监听，如Tomcat，收到包内的信息后就进行后续的操作。</p>
-<p>如果告诉的是相关的进程，往往通过RPC调用，即远程调用的方式来实现，由远程框架统一处理。</p>
-</blockquote>
-</li>
+<li>channelActive()数据的发送逻辑，往里写数据</li>
+<li>channelRead()数据的接收</li>
 </ul>
-<p><img src="../images/TCP.png" alt="TCP头"></p>
-<p><img src="../images/IP.png" alt="IP头"> </p>
-<p><img src="../images/MAC.png" alt="MAC头"></p>
+</blockquote>
+<h2 id="服务端相应"><a href="#服务端相应" class="headerlink" title="服务端相应"></a>服务端相应</h2><p>连接主体：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = <span class="number">8001</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        NioEventLoopGroup boss = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">        NioEventLoopGroup worker = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ServerBootstrap serverBootstrap = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">        serverBootstrap</span><br><span class="line">                .group(boss, worker)</span><br><span class="line">                .channel(NioServerSocketChannel.class)</span><br><span class="line">                .option(ChannelOption.SO_BACKLOG, <span class="number">1024</span>)</span><br><span class="line">                .option(ChannelOption.TCP_NODELAY, <span class="keyword">true</span>)</span><br><span class="line">                .option(ChannelOption.SO_KEEPALIVE,<span class="keyword">true</span>)</span><br><span class="line">                .childHandler(<span class="keyword">new</span> ChannelInitializer&lt;NioSocketChannel&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(NioSocketChannel nioSocketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                        nioSocketChannel.pipeline().addLast(<span class="keyword">new</span> ServerHandler());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        bind(serverBootstrap);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(ServerBootstrap serverBootstrap)</span> </span>&#123;</span><br><span class="line">        serverBootstrap.bind(PORT).addListener(future -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (future.isSuccess()) &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 端口["</span> + PORT + <span class="string">"]已开启!等待连接..."</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 端口["</span> + PORT + <span class="string">"]开启失败!无法连接..."</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-      
+<blockquote>
+<ul>
+<li>.childHandler(new ChannelInitializer<niosocketchannel>({  添加处理逻辑  }) </niosocketchannel></li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> Date() + <span class="string">"设备尝试上线..."</span>);</span><br><span class="line">        ByteBuf requestByteBuf = (ByteBuf) msg;</span><br><span class="line"></span><br><span class="line">        Packet packet = PacketCodeC.INSTANCE.decode(requestByteBuf);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (packet <span class="keyword">instanceof</span> LoginRequestPacket) &#123;</span><br><span class="line">            <span class="comment">//登录流程</span></span><br><span class="line">            LoginRequestPacket loginRequestPacket = (LoginRequestPacket) packet;</span><br><span class="line"></span><br><span class="line">            LoginResponsePacket loginResponsePacket = <span class="keyword">new</span> LoginResponsePacket();</span><br><span class="line">            loginResponsePacket.setVersion(packet.getVersion());</span><br><span class="line">            <span class="keyword">if</span> (valid(loginRequestPacket)) &#123;</span><br><span class="line">                loginResponsePacket.setSuccess(<span class="keyword">true</span>);</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">":设备验证成功，已正常上线"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                loginResponsePacket.setReason(<span class="string">"设备验证失败"</span>);</span><br><span class="line">                loginResponsePacket.setSuccess(<span class="keyword">false</span>);</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">":设备上线失败！"</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//登陆响应</span></span><br><span class="line">            ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginResponsePacket);</span><br><span class="line">            ctx.channel().writeAndFlush(responseByteBuf);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//验证requestPacket是否正确</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">valid</span><span class="params">(LoginRequestPacket loginRequestPacket)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/26/趣谈网络协议/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-ubuntu18.04 安装MySQL" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/26/ubuntu18.04 安装MySQL/">Ubuntu18.04 安装MySQL与默认编码设置</a>
-    </h1>
-  
-
-        
-        <a href="/2019/07/26/ubuntu18.04 安装MySQL/" class="archive-article-date">
-  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>打开终端直接开始，编码配置方法在后面</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>通过apt更新包索引</span><br><span class="line">sudo apt update</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>按照默认软件包安装</span><br><span class="line">sudo apt install mysql-server</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>运行安全脚本</span><br><span class="line">sudo mysql_secure_installation</span><br></pre></td></tr></table></figure>
-
-<p>这里会提醒安全等级</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Securing the MySQL server deployment.</span><br><span class="line"></span><br><span class="line">Connecting to MySQL using a blank password.</span><br><span class="line"></span><br><span class="line">VALIDATE PASSWORD PLUGIN can be used to test passwords</span><br><span class="line">and improve security. It checks the strength of password</span><br><span class="line">and allows the users to set only those passwords which are</span><br><span class="line">secure enough. Would you like to setup VALIDATE PASSWORD plugin?</span><br><span class="line"></span><br><span class="line">Press y|Y for Yes, any other key for No: y</span><br><span class="line"></span><br><span class="line">There are three levels of password validation policy:</span><br><span class="line"></span><br><span class="line">LOW    Length &gt;= 8</span><br><span class="line">MEDIUM Length &gt;= 8, numeric, mixed case, and special characters</span><br><span class="line">STRONG Length &gt;= 8, numeric, mixed case, special characters and dictionary                  file</span><br><span class="line"></span><br><span class="line">Please enter 0 = LOW, 1 = MEDIUM and 2 = STRONG:</span><br></pre></td></tr></table></figure>
-
-<p>按照要求选择安全等级，本地自用，选择0（最低等级，将来需要设置长度不少于8个字符的密码）</p>
-<p>在Ubuntu系统中MySQL 5.7及之后的版本，MySQL的root用户被默认设置成通过auth_socket插件进行认证，而不是通过密码。在很多情况下，这些配置可以使系统更加的安全和可靠，但如果允许外部程序（例如phpMyAdmin）访问时，这将是事情变得非常复杂。</p>
-<p>为了能够以root用户通过密码的方式连接MySQL，需要将其认证方式从 auth_socket 方式变更为mysql_native_password。进行该设置，通过终端打开MySQL的提示符：</p>
-<p>更换默认的认证方式       （auth_socket  ===》   mysql_native_password）</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>启动MySQL</span><br><span class="line">sudo mysql </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>查看每个用户的认证方式</span><br><span class="line">SELECT user,authentication_string,plugin,host FROM mysql.user;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>输出结果：</span><br><span class="line"><span class="meta">mysql&gt;</span> SELECT user,authentication_string,plugin,host FROM mysql.user;</span><br><span class="line">+------------------+-------------------------------------------+-----------------------+-----------+</span><br><span class="line">| user             | authentication_string                     | plugin                | host      |</span><br><span class="line">+------------------+-------------------------------------------+-----------------------+-----------+</span><br><span class="line">| root             |                                           | auth_socket           | localhost |</span><br><span class="line">| mysql.session    | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE | mysql_native_password | localhost |</span><br><span class="line">| mysql.sys        | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE | mysql_native_password | localhost |</span><br><span class="line">| debian-sys-maint | *0514040CAF65C120C8905B09219C0BA8010B2373 | mysql_native_password | localhost |</span><br><span class="line">+------------------+-------------------------------------------+-----------------------+-----------+</span><br><span class="line">4 rows in set (0.00 sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>更改root的认证方式，auth_socket  ===》   mysql_native_password</span><br><span class="line">ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '&#123;PASSWORD&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>让数据库系统重新加载授权表</span><br><span class="line">FLUSH PRIVILEGES;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>重新查看授权方式</span><br><span class="line">SELECT user,authentication_string,plugin,host FROM mysql.user;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>输出结果：</span><br><span class="line"><span class="meta">mysql&gt;</span> SELECT user,authentication_string,plugin,host FROM mysql.user;</span><br><span class="line">+------------------+-------------------------------------------+-----------------------+-----------+</span><br><span class="line">| user             | authentication_string                     | plugin                | host      |</span><br><span class="line">+------------------+-------------------------------------------+-----------------------+-----------+</span><br><span class="line">| root             | *84AAC12F54AB666ECFC2A83C676908C8BBC381B1 | mysql_native_password | localhost |</span><br><span class="line">| mysql.session    | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE | mysql_native_password | localhost |</span><br><span class="line">| mysql.sys        | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE | mysql_native_password | localhost |</span><br><span class="line">| debian-sys-maint | *0514040CAF65C120C8905B09219C0BA8010B2373 | mysql_native_password | localhost |</span><br><span class="line">+------------------+-------------------------------------------+-----------------------+-----------+</span><br><span class="line">4 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-
-<p>安装可视化工具     MySQL workbench</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install mysql-workbench</span><br></pre></td></tr></table></figure>
-
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>Ubuntu默认语言是英语，安装MySQL后，默认建表插入语句时出现错误1336，这是默认编码与插入字符不符造成的。</p>
-<p>修改方法如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>mysql默认配置文件夹</span><br><span class="line">ls /etc/mysql/</span><br><span class="line">conf.d      debian-start  my.cnf.fallback  mysql.conf.d</span><br><span class="line">debian.cnf  my.cnf        mysql.cnf</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>修改mysql.conf.d文件夹下的配置文件</span><br><span class="line">vim /mysql.conf.d/mysql.conf.d</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>在[mysqld]块下追加一行字符设置	character-set-server=utf8</span><br><span class="line">[mysqld]</span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span> * Basic Settings</span><br><span class="line"><span class="meta">#</span></span><br><span class="line">user		= mysql</span><br><span class="line">pid-file	= /var/run/mysqld/mysqld.pid</span><br><span class="line">socket		= /var/run/mysqld/mysqld.sock</span><br><span class="line">port		= 3306</span><br><span class="line">basedir		= /usr</span><br><span class="line">datadir		= /var/lib/mysql</span><br><span class="line">tmpdir		= /tmp</span><br><span class="line">lc-messages-dir	= /usr/share/mysql</span><br><span class="line">skip-external-locking</span><br><span class="line">character-set-server=utf8</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>还需要设置客户端的配置</span><br><span class="line">cd /etc/mysql/conf.d</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>修改该路径下的mysql.cnf,依然在[mysqld]后追加，内容稍有不同</span><br><span class="line">default-character-set=utf8</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>登陆消息处理与响应逻辑</li>
+</ul>
+</blockquote>
+<p>响应逻辑包：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginResponsePacket</span> <span class="keyword">extends</span> <span class="title">Packet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> success;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String reason;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Byte <span class="title">getCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> LOGIN_RESPONSE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
       
@@ -1103,89 +1262,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/26/ubuntu18.04 安装MySQL/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-二进制文件安装为应用程序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/26/二进制文件安装为应用程序/">二进制文件安装为应用程序--以Typora为例</a>
-    </h1>
-  
-
-        
-        <a href="/2019/07/26/二进制文件安装为应用程序/" class="archive-article-date">
-  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="1-获取二进制文件到本地"><a href="#1-获取二进制文件到本地" class="headerlink" title="1. 获取二进制文件到本地"></a>1. 获取二进制文件到本地</h4><ul>
-<li>获取&lt;tar.gz&gt;压缩文件<ul>
-<li>wget  <download_path></download_path></li>
-</ul>
-</li>
-<li>解压到指定目录</li>
-<li>在目录下   ./<app_name>  试运行</app_name></li>
-</ul>
-<h4 id="2-设置为应用程序"><a href="#2-设置为应用程序" class="headerlink" title="2. 设置为应用程序"></a>2. 设置为应用程序</h4><ul>
-<li>修改系统设置<ul>
-<li>/usr/share/applications/Typora.desktop</li>
-</ul>
-</li>
-<li>编辑 Typora.desktop文件</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Name=Typora</span><br><span class="line">GenericName=Editor</span><br><span class="line">Comment=Typroa - a markdown editor</span><br><span class="line">Exec="&lt;PATH&gt;/Typora" %U</span><br><span class="line">Icon=&lt;ICONPATH&gt;</span><br><span class="line">Terminal=false</span><br><span class="line">Categories=Markdown;</span><br><span class="line">StartupNotify=false</span><br><span class="line">Type=Application</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li><h4 id="重启后生效"><a href="#重启后生效" class="headerlink" title="重启后生效"></a>重启后生效</h4></li>
-</ol>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/26/二进制文件安装为应用程序/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/07/26/Netty之通信案例/">展开全文 >></a>
         </p>
       
 
