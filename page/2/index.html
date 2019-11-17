@@ -151,19 +151,19 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Netty之通信案例" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-二进制文件安装为应用程序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/26/Netty之通信案例/">Netty案例</a>
+      <a class="article-title" href="/2019/07/26/二进制文件安装为应用程序/">二进制文件安装为应用程序--以Typora为例</a>
     </h1>
   
 
         
-        <a href="/2019/07/26/Netty之通信案例/" class="archive-article-date">
+        <a href="/2019/07/26/二进制文件安装为应用程序/" class="archive-article-date">
   	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
 </a>
         
@@ -171,44 +171,26 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="通讯协议"><a href="#通讯协议" class="headerlink" title="通讯协议"></a>通讯协议</h2><p>延续之前版本</p>
-<h2 id="客户端请求"><a href="#客户端请求" class="headerlink" title="客户端请求"></a>客户端请求</h2><p>连接主体：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_RETRY = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String HOST = <span class="string">"127.0.0.1"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = <span class="number">8001</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        NioEventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line">        Bootstrap bootstrap = <span class="keyword">new</span> Bootstrap();</span><br><span class="line">        bootstrap.group(workerGroup)</span><br><span class="line">                .channel(NioSocketChannel.class)</span><br><span class="line">                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, <span class="number">5000</span>)</span><br><span class="line">                .option(ChannelOption.SO_KEEPALIVE, <span class="keyword">true</span>)</span><br><span class="line">                .option(ChannelOption.TCP_NODELAY, <span class="keyword">true</span>)</span><br><span class="line">                .handler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel socketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                        socketChannel.pipeline().addLast(<span class="keyword">new</span> ClientHandler());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">        connect(bootstrap, MAX_RETRY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(Bootstrap bootstrap, <span class="keyword">int</span> retry)</span> </span>&#123;</span><br><span class="line">        bootstrap.connect(HOST,PORT).addListener(future -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (future.isSuccess()) &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 设备通讯连接成功!"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span> (retry == <span class="number">0</span>)&#123;</span><br><span class="line">                System.err.println(<span class="string">"多次尝试连接失败，放弃连接！"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 第几次重连</span></span><br><span class="line">                <span class="keyword">int</span> order = (MAX_RETRY - retry) + <span class="number">1</span>;</span><br><span class="line">                <span class="comment">// 本次重连的间隔</span></span><br><span class="line">                <span class="keyword">int</span> delay = <span class="number">1</span> &lt;&lt; order;</span><br><span class="line">                System.err.println(<span class="keyword">new</span> Date() + <span class="string">": 连接失败，第"</span> + order + <span class="string">"次重连……"</span>);</span><br><span class="line">                bootstrap.config().group().schedule(() -&gt; connect(bootstrap, retry - <span class="number">1</span>), delay, TimeUnit.SECONDS);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ul>
-<li>定义连接端口</li>
-<li>定义网络连接属性配置</li>
-<li>.handler(new ChannelInitializer<socketchannel>() {  方法  }); 添加逻辑处理器</socketchannel></li>
+        <h4 id="1-获取二进制文件到本地"><a href="#1-获取二进制文件到本地" class="headerlink" title="1. 获取二进制文件到本地"></a>1. 获取二进制文件到本地</h4><ul>
+<li>获取&lt;tar.gz&gt;压缩文件<ul>
+<li>wget  <download_path></download_path></li>
 </ul>
-</blockquote>
-<p>逻辑处理器：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 设备开始上线..."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建登陆对象</span></span><br><span class="line">        LoginRequestPacket loginRequestPacket = <span class="keyword">new</span> LoginRequestPacket();</span><br><span class="line">        loginRequestPacket.setUserId(UUID.randomUUID().toString());</span><br><span class="line">        loginRequestPacket.setContent(<span class="string">"hello"</span>);</span><br><span class="line">        loginRequestPacket.setLocation(<span class="string">"zust"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//编码</span></span><br><span class="line">        ByteBuf requestByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginRequestPacket);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//写数据</span></span><br><span class="line">        ctx.channel().writeAndFlush(requestByteBuf);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ByteBuf byteBuf = (ByteBuf) msg;</span><br><span class="line">        Packet packet = PacketCodeC.INSTANCE.decode(byteBuf);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (packet <span class="keyword">instanceof</span> LoginResponsePacket) &#123;</span><br><span class="line">            System.out.println(<span class="string">"验证是否为response"</span>);</span><br><span class="line">            <span class="comment">//对response进行处理</span></span><br><span class="line">            LoginResponsePacket loginResponsePacket = (LoginResponsePacket) packet;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (loginResponsePacket.isSuccess()) &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 设备成功上线!"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 上线失败，原因："</span> + loginResponsePacket.getReason());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ul>
-<li>channelActive()数据的发送逻辑，往里写数据</li>
-<li>channelRead()数据的接收</li>
+</li>
+<li>解压到指定目录</li>
+<li>在目录下   ./<app_name>  试运行</app_name></li>
 </ul>
-</blockquote>
-<h2 id="服务端相应"><a href="#服务端相应" class="headerlink" title="服务端相应"></a>服务端相应</h2><p>连接主体：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = <span class="number">8001</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        NioEventLoopGroup boss = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">        NioEventLoopGroup worker = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ServerBootstrap serverBootstrap = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">        serverBootstrap</span><br><span class="line">                .group(boss, worker)</span><br><span class="line">                .channel(NioServerSocketChannel.class)</span><br><span class="line">                .option(ChannelOption.SO_BACKLOG, <span class="number">1024</span>)</span><br><span class="line">                .option(ChannelOption.TCP_NODELAY, <span class="keyword">true</span>)</span><br><span class="line">                .option(ChannelOption.SO_KEEPALIVE,<span class="keyword">true</span>)</span><br><span class="line">                .childHandler(<span class="keyword">new</span> ChannelInitializer&lt;NioSocketChannel&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(NioSocketChannel nioSocketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                        nioSocketChannel.pipeline().addLast(<span class="keyword">new</span> ServerHandler());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        bind(serverBootstrap);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(ServerBootstrap serverBootstrap)</span> </span>&#123;</span><br><span class="line">        serverBootstrap.bind(PORT).addListener(future -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (future.isSuccess()) &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 端口["</span> + PORT + <span class="string">"]已开启!等待连接..."</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 端口["</span> + PORT + <span class="string">"]开启失败!无法连接..."</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ul>
-<li>.childHandler(new ChannelInitializer<niosocketchannel>({  添加处理逻辑  }) </niosocketchannel></li>
+<h4 id="2-设置为应用程序"><a href="#2-设置为应用程序" class="headerlink" title="2. 设置为应用程序"></a>2. 设置为应用程序</h4><ul>
+<li>修改系统设置<ul>
+<li>/usr/share/applications/Typora.desktop</li>
 </ul>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> Date() + <span class="string">"设备尝试上线..."</span>);</span><br><span class="line">        ByteBuf requestByteBuf = (ByteBuf) msg;</span><br><span class="line"></span><br><span class="line">        Packet packet = PacketCodeC.INSTANCE.decode(requestByteBuf);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (packet <span class="keyword">instanceof</span> LoginRequestPacket) &#123;</span><br><span class="line">            <span class="comment">//登录流程</span></span><br><span class="line">            LoginRequestPacket loginRequestPacket = (LoginRequestPacket) packet;</span><br><span class="line"></span><br><span class="line">            LoginResponsePacket loginResponsePacket = <span class="keyword">new</span> LoginResponsePacket();</span><br><span class="line">            loginResponsePacket.setVersion(packet.getVersion());</span><br><span class="line">            <span class="keyword">if</span> (valid(loginRequestPacket)) &#123;</span><br><span class="line">                loginResponsePacket.setSuccess(<span class="keyword">true</span>);</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">":设备验证成功，已正常上线"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                loginResponsePacket.setReason(<span class="string">"设备验证失败"</span>);</span><br><span class="line">                loginResponsePacket.setSuccess(<span class="keyword">false</span>);</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">":设备上线失败！"</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//登陆响应</span></span><br><span class="line">            ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginResponsePacket);</span><br><span class="line">            ctx.channel().writeAndFlush(responseByteBuf);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//验证requestPacket是否正确</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">valid</span><span class="params">(LoginRequestPacket loginRequestPacket)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ul>
-<li>登陆消息处理与响应逻辑</li>
+</li>
+<li>编辑 Typora.desktop文件</li>
 </ul>
-</blockquote>
-<p>响应逻辑包：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginResponsePacket</span> <span class="keyword">extends</span> <span class="title">Packet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> success;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String reason;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Byte <span class="title">getCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> LOGIN_RESPONSE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Name=Typora</span><br><span class="line">GenericName=Editor</span><br><span class="line">Comment=Typroa - a markdown editor</span><br><span class="line">Exec="&lt;PATH&gt;/Typora" %U</span><br><span class="line">Icon=&lt;ICONPATH&gt;</span><br><span class="line">Terminal=false</span><br><span class="line">Categories=Markdown;</span><br><span class="line">StartupNotify=false</span><br><span class="line">Type=Application</span><br></pre></td></tr></table></figure>
 
+<ol start="3">
+<li><h4 id="重启后生效"><a href="#重启后生效" class="headerlink" title="重启后生效"></a>重启后生效</h4></li>
+</ol>
 
       
 
@@ -221,7 +203,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/26/Netty之通信案例/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/07/26/二进制文件安装为应用程序/">展开全文 >></a>
         </p>
       
 
@@ -303,6 +285,106 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/07/26/ubuntu18.04 安装MySQL/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Netty之通信案例" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/07/26/Netty之通信案例/">Netty案例</a>
+    </h1>
+  
+
+        
+        <a href="/2019/07/26/Netty之通信案例/" class="archive-article-date">
+  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="通讯协议"><a href="#通讯协议" class="headerlink" title="通讯协议"></a>通讯协议</h2><p>延续之前版本</p>
+<h2 id="客户端请求"><a href="#客户端请求" class="headerlink" title="客户端请求"></a>客户端请求</h2><p>连接主体：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_RETRY = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String HOST = <span class="string">"127.0.0.1"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = <span class="number">8001</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        NioEventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line">        Bootstrap bootstrap = <span class="keyword">new</span> Bootstrap();</span><br><span class="line">        bootstrap.group(workerGroup)</span><br><span class="line">                .channel(NioSocketChannel.class)</span><br><span class="line">                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, <span class="number">5000</span>)</span><br><span class="line">                .option(ChannelOption.SO_KEEPALIVE, <span class="keyword">true</span>)</span><br><span class="line">                .option(ChannelOption.TCP_NODELAY, <span class="keyword">true</span>)</span><br><span class="line">                .handler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel socketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                        socketChannel.pipeline().addLast(<span class="keyword">new</span> ClientHandler());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">        connect(bootstrap, MAX_RETRY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(Bootstrap bootstrap, <span class="keyword">int</span> retry)</span> </span>&#123;</span><br><span class="line">        bootstrap.connect(HOST,PORT).addListener(future -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (future.isSuccess()) &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 设备通讯连接成功!"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span> (retry == <span class="number">0</span>)&#123;</span><br><span class="line">                System.err.println(<span class="string">"多次尝试连接失败，放弃连接！"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 第几次重连</span></span><br><span class="line">                <span class="keyword">int</span> order = (MAX_RETRY - retry) + <span class="number">1</span>;</span><br><span class="line">                <span class="comment">// 本次重连的间隔</span></span><br><span class="line">                <span class="keyword">int</span> delay = <span class="number">1</span> &lt;&lt; order;</span><br><span class="line">                System.err.println(<span class="keyword">new</span> Date() + <span class="string">": 连接失败，第"</span> + order + <span class="string">"次重连……"</span>);</span><br><span class="line">                bootstrap.config().group().schedule(() -&gt; connect(bootstrap, retry - <span class="number">1</span>), delay, TimeUnit.SECONDS);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>定义连接端口</li>
+<li>定义网络连接属性配置</li>
+<li>.handler(new ChannelInitializer<socketchannel>() {  方法  }); 添加逻辑处理器</socketchannel></li>
+</ul>
+</blockquote>
+<p>逻辑处理器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 设备开始上线..."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建登陆对象</span></span><br><span class="line">        LoginRequestPacket loginRequestPacket = <span class="keyword">new</span> LoginRequestPacket();</span><br><span class="line">        loginRequestPacket.setUserId(UUID.randomUUID().toString());</span><br><span class="line">        loginRequestPacket.setContent(<span class="string">"hello"</span>);</span><br><span class="line">        loginRequestPacket.setLocation(<span class="string">"zust"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//编码</span></span><br><span class="line">        ByteBuf requestByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginRequestPacket);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//写数据</span></span><br><span class="line">        ctx.channel().writeAndFlush(requestByteBuf);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ByteBuf byteBuf = (ByteBuf) msg;</span><br><span class="line">        Packet packet = PacketCodeC.INSTANCE.decode(byteBuf);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (packet <span class="keyword">instanceof</span> LoginResponsePacket) &#123;</span><br><span class="line">            System.out.println(<span class="string">"验证是否为response"</span>);</span><br><span class="line">            <span class="comment">//对response进行处理</span></span><br><span class="line">            LoginResponsePacket loginResponsePacket = (LoginResponsePacket) packet;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (loginResponsePacket.isSuccess()) &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 设备成功上线!"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 上线失败，原因："</span> + loginResponsePacket.getReason());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>channelActive()数据的发送逻辑，往里写数据</li>
+<li>channelRead()数据的接收</li>
+</ul>
+</blockquote>
+<h2 id="服务端相应"><a href="#服务端相应" class="headerlink" title="服务端相应"></a>服务端相应</h2><p>连接主体：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = <span class="number">8001</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        NioEventLoopGroup boss = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">        NioEventLoopGroup worker = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ServerBootstrap serverBootstrap = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">        serverBootstrap</span><br><span class="line">                .group(boss, worker)</span><br><span class="line">                .channel(NioServerSocketChannel.class)</span><br><span class="line">                .option(ChannelOption.SO_BACKLOG, <span class="number">1024</span>)</span><br><span class="line">                .option(ChannelOption.TCP_NODELAY, <span class="keyword">true</span>)</span><br><span class="line">                .option(ChannelOption.SO_KEEPALIVE,<span class="keyword">true</span>)</span><br><span class="line">                .childHandler(<span class="keyword">new</span> ChannelInitializer&lt;NioSocketChannel&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(NioSocketChannel nioSocketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                        nioSocketChannel.pipeline().addLast(<span class="keyword">new</span> ServerHandler());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        bind(serverBootstrap);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(ServerBootstrap serverBootstrap)</span> </span>&#123;</span><br><span class="line">        serverBootstrap.bind(PORT).addListener(future -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (future.isSuccess()) &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 端口["</span> + PORT + <span class="string">"]已开启!等待连接..."</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">": 端口["</span> + PORT + <span class="string">"]开启失败!无法连接..."</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>.childHandler(new ChannelInitializer<niosocketchannel>({  添加处理逻辑  }) </niosocketchannel></li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="keyword">new</span> Date() + <span class="string">"设备尝试上线..."</span>);</span><br><span class="line">        ByteBuf requestByteBuf = (ByteBuf) msg;</span><br><span class="line"></span><br><span class="line">        Packet packet = PacketCodeC.INSTANCE.decode(requestByteBuf);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (packet <span class="keyword">instanceof</span> LoginRequestPacket) &#123;</span><br><span class="line">            <span class="comment">//登录流程</span></span><br><span class="line">            LoginRequestPacket loginRequestPacket = (LoginRequestPacket) packet;</span><br><span class="line"></span><br><span class="line">            LoginResponsePacket loginResponsePacket = <span class="keyword">new</span> LoginResponsePacket();</span><br><span class="line">            loginResponsePacket.setVersion(packet.getVersion());</span><br><span class="line">            <span class="keyword">if</span> (valid(loginRequestPacket)) &#123;</span><br><span class="line">                loginResponsePacket.setSuccess(<span class="keyword">true</span>);</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">":设备验证成功，已正常上线"</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                loginResponsePacket.setReason(<span class="string">"设备验证失败"</span>);</span><br><span class="line">                loginResponsePacket.setSuccess(<span class="keyword">false</span>);</span><br><span class="line">                System.out.println(<span class="keyword">new</span> Date() + <span class="string">":设备上线失败！"</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//登陆响应</span></span><br><span class="line">            ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginResponsePacket);</span><br><span class="line">            ctx.channel().writeAndFlush(responseByteBuf);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//验证requestPacket是否正确</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">valid</span><span class="params">(LoginRequestPacket loginRequestPacket)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>登陆消息处理与响应逻辑</li>
+</ul>
+</blockquote>
+<p>响应逻辑包：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginResponsePacket</span> <span class="keyword">extends</span> <span class="title">Packet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> success;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String reason;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Byte <span class="title">getCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> LOGIN_RESPONSE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/07/26/Netty之通信案例/">展开全文 >></a>
         </p>
       
 
@@ -458,19 +540,19 @@
 
 
   
-    <article id="post-二进制文件安装为应用程序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-趣谈网络协议" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/26/二进制文件安装为应用程序/">二进制文件安装为应用程序--以Typora为例</a>
+      <a class="article-title" href="/2019/07/26/趣谈网络协议/">浅记--趣谈网络协议		长期更新....</a>
     </h1>
   
 
         
-        <a href="/2019/07/26/二进制文件安装为应用程序/" class="archive-article-date">
+        <a href="/2019/07/26/趣谈网络协议/" class="archive-article-date">
   	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
 </a>
         
@@ -478,26 +560,49 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h4 id="1-获取二进制文件到本地"><a href="#1-获取二进制文件到本地" class="headerlink" title="1. 获取二进制文件到本地"></a>1. 获取二进制文件到本地</h4><ul>
-<li>获取&lt;tar.gz&gt;压缩文件<ul>
-<li>wget  <download_path></download_path></li>
+        <h2 id="Why-Networking-Protocol？"><a href="#Why-Networking-Protocol？" class="headerlink" title="Why Networking Protocol？"></a>Why Networking Protocol？</h2><h4 id="协议三要素"><a href="#协议三要素" class="headerlink" title="协议三要素"></a>协议三要素</h4><blockquote>
+<ul>
+<li>语法</li>
+<li>语义</li>
+<li>顺序</li>
 </ul>
+</blockquote>
+<h4 id="简例说明常用网络协议："><a href="#简例说明常用网络协议：" class="headerlink" title="简例说明常用网络协议："></a>简例说明常用网络协议：</h4><p>以网络购物为例：</p>
+<ul>
+<li><p>由URL到IP地址，使用一般的地址协议薄DNS查找，或者更精准的HTTPDNS，使用HTTP协议封装“购物需求”内容。称之为，应用层。</p>
 </li>
-<li>解压到指定目录</li>
-<li>在目录下   ./<app_name>  试运行</app_name></li>
-</ul>
-<h4 id="2-设置为应用程序"><a href="#2-设置为应用程序" class="headerlink" title="2. 设置为应用程序"></a>2. 设置为应用程序</h4><ul>
-<li>修改系统设置<ul>
-<li>/usr/share/applications/Typora.desktop</li>
-</ul>
+<li><p>下一层为传输层，（TCP、UDP两种）内含浏览器监听端口和服务器监听端口。</p>
 </li>
-<li>编辑 Typora.desktop文件</li>
+<li><p>下一层为网络层，IP协议。内含本机IP地址、目标IP地址。</p>
+</li>
+<li><p>下一层为MAC层，网关收到包再根据路由表判断目标IP的行走路径。由操作系统到网关是依据ARP协议：</p>
+<blockquote>
+<p>（ARP协议）</p>
+<p>操作系统在本地广播寻找网关</p>
+<p>网关收到广播会回复自己的MAC地址</p>
+<p>操作系统再根据MAC地址找到网关，把数据包发送给网关。</p>
+<p>路由协议中常用的也有OSPF、BGP</p>
+</blockquote>
+</li>
+<li><p>最后一个网关收到数据包后，对局域内进行广播。根据MAC地址找到目标IP机器。</p>
+<blockquote>
+<p>局域内广播</p>
+<p>目标IP机器回复MAC地址</p>
+<p>网关根据MAC地址找到目标服务器</p>
+</blockquote>
+</li>
+<li><p>目标服务器收到包后，依次取下MAC头、IP头，接着遇到封装的TCP协议。</p>
+</li>
+<li><p>将其转交给传输层，即TCP层。该层收到包后会有一个回应。同时，根据目标端口号找到对应的端口。</p>
+<blockquote>
+<p>如果目标端口号被电商网站的进程监听，如Tomcat，收到包内的信息后就进行后续的操作。</p>
+<p>如果告诉的是相关的进程，往往通过RPC调用，即远程调用的方式来实现，由远程框架统一处理。</p>
+</blockquote>
+</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Name=Typora</span><br><span class="line">GenericName=Editor</span><br><span class="line">Comment=Typroa - a markdown editor</span><br><span class="line">Exec="&lt;PATH&gt;/Typora" %U</span><br><span class="line">Icon=&lt;ICONPATH&gt;</span><br><span class="line">Terminal=false</span><br><span class="line">Categories=Markdown;</span><br><span class="line">StartupNotify=false</span><br><span class="line">Type=Application</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li><h4 id="重启后生效"><a href="#重启后生效" class="headerlink" title="重启后生效"></a>重启后生效</h4></li>
-</ol>
+<p><img src="../images/TCP.png" alt="TCP头"></p>
+<p><img src="../images/IP.png" alt="IP头"> </p>
+<p><img src="../images/MAC.png" alt="MAC头"></p>
 
       
 
@@ -510,95 +615,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/26/二进制文件安装为应用程序/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-samba网络服务器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/26/samba网络服务器/">samba 网络服务器共享Linux、Windows文件</a>
-    </h1>
-  
-
-        
-        <a href="/2019/07/26/samba网络服务器/" class="archive-article-date">
-  	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="https://github.com/lwfinger/rtl8192du" target="_blank" rel="noopener">驱动下载链接</a></p>
-<ol>
-<li><p>源码编译三部曲</p>
-<p>tar xvf &lt;tar.gz&gt; <path>     解压后进入相应的目录下</path></p>
-<ul>
-<li><p>./configure –prefix==<path></path></p>
-<ul>
-<li>设置安装的目标文件夹，选择需要安装的功能模块</li>
-</ul>
-</li>
-<li><p>make</p>
-<ul>
-<li>根据前一步的选定，将源代码变成可执行的二进制文件</li>
-</ul>
-</li>
-<li><p>make install</p>
-<ul>
-<li>将编译好的二进制文件复制到系统中，并设置应用环境</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-<ol start="2">
-<li>安装samba套件,设置共享文件夹</li>
-</ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>#安装 samba 和 samba-client</span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#添加samba用户（需要是系统用户）,设置登陆密码</span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#启动</span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>#设置共享文件夹，给与权限</span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/26/samba网络服务器/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/07/26/趣谈网络协议/">展开全文 >></a>
         </p>
       
 

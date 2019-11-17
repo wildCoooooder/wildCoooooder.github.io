@@ -1192,19 +1192,19 @@
 
 
   
-    <article id="post-趣谈网络协议" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-samba网络服务器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/26/趣谈网络协议/">浅记--趣谈网络协议		长期更新....</a>
+      <a class="article-title" href="/2019/07/26/samba网络服务器/">samba 网络服务器共享Linux、Windows文件</a>
     </h1>
   
 
         
-        <a href="/2019/07/26/趣谈网络协议/" class="archive-article-date">
+        <a href="/2019/07/26/samba网络服务器/" class="archive-article-date">
   	<time datetime="2019-07-26T02:56:18.646Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
 </a>
         
@@ -1212,50 +1212,33 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Why-Networking-Protocol？"><a href="#Why-Networking-Protocol？" class="headerlink" title="Why Networking Protocol？"></a>Why Networking Protocol？</h2><h4 id="协议三要素"><a href="#协议三要素" class="headerlink" title="协议三要素"></a>协议三要素</h4><blockquote>
+        <p><a href="https://github.com/lwfinger/rtl8192du" target="_blank" rel="noopener">驱动下载链接</a></p>
+<ol>
+<li><p>源码编译三部曲</p>
+<p>tar xvf &lt;tar.gz&gt; <path>     解压后进入相应的目录下</path></p>
 <ul>
-<li>语法</li>
-<li>语义</li>
-<li>顺序</li>
+<li><p>./configure –prefix==<path></path></p>
+<ul>
+<li>设置安装的目标文件夹，选择需要安装的功能模块</li>
 </ul>
-</blockquote>
-<h4 id="简例说明常用网络协议："><a href="#简例说明常用网络协议：" class="headerlink" title="简例说明常用网络协议："></a>简例说明常用网络协议：</h4><p>以网络购物为例：</p>
+</li>
+<li><p>make</p>
 <ul>
-<li><p>由URL到IP地址，使用一般的地址协议薄DNS查找，或者更精准的HTTPDNS，使用HTTP协议封装“购物需求”内容。称之为，应用层。</p>
+<li>根据前一步的选定，将源代码变成可执行的二进制文件</li>
+</ul>
 </li>
-<li><p>下一层为传输层，（TCP、UDP两种）内含浏览器监听端口和服务器监听端口。</p>
-</li>
-<li><p>下一层为网络层，IP协议。内含本机IP地址、目标IP地址。</p>
-</li>
-<li><p>下一层为MAC层，网关收到包再根据路由表判断目标IP的行走路径。由操作系统到网关是依据ARP协议：</p>
-<blockquote>
-<p>（ARP协议）</p>
-<p>操作系统在本地广播寻找网关</p>
-<p>网关收到广播会回复自己的MAC地址</p>
-<p>操作系统再根据MAC地址找到网关，把数据包发送给网关。</p>
-<p>路由协议中常用的也有OSPF、BGP</p>
-</blockquote>
-</li>
-<li><p>最后一个网关收到数据包后，对局域内进行广播。根据MAC地址找到目标IP机器。</p>
-<blockquote>
-<p>局域内广播</p>
-<p>目标IP机器回复MAC地址</p>
-<p>网关根据MAC地址找到目标服务器</p>
-</blockquote>
-</li>
-<li><p>目标服务器收到包后，依次取下MAC头、IP头，接着遇到封装的TCP协议。</p>
-</li>
-<li><p>将其转交给传输层，即TCP层。该层收到包后会有一个回应。同时，根据目标端口号找到对应的端口。</p>
-<blockquote>
-<p>如果目标端口号被电商网站的进程监听，如Tomcat，收到包内的信息后就进行后续的操作。</p>
-<p>如果告诉的是相关的进程，往往通过RPC调用，即远程调用的方式来实现，由远程框架统一处理。</p>
-</blockquote>
+<li><p>make install</p>
+<ul>
+<li>将编译好的二进制文件复制到系统中，并设置应用环境</li>
+</ul>
 </li>
 </ul>
-<p><img src="../images/TCP.png" alt="TCP头"></p>
-<p><img src="../images/IP.png" alt="IP头"> </p>
-<p><img src="../images/MAC.png" alt="MAC头"></p>
-
+</li>
+</ol>
+<ol start="2">
+<li>安装samba套件,设置共享文件夹</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#安装 samba 和 samba-client</span></span></span><br><span class="line">sudo apt-get install samba samba-client </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#添加samba用户（需要是系统用户）,设置登陆密码</span></span></span><br><span class="line">smpasswd -a &lt;username&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#启动</span></span></span><br><span class="line">sudo /etc/init.d/samba start</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#设置共享文件夹，给与权限</span></span></span><br><span class="line">chmod 777 &lt;path-dir&gt;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -1267,7 +1250,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/26/趣谈网络协议/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/07/26/samba网络服务器/">展开全文 >></a>
         </p>
       
 
